@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<body>
+<select id="dropDown"></select>
+<br /><br />
+Grid Width: <input type="text" id="gridWidth" size="2" value="5">
+Grid Height: <input type="text" id="gridHeight" size="2" value="5">
+<br /><br />
+<button type="button" onclick="patternize()">Patternize!</button>
+<br /><br />
+<textarea id="codeDisplay" rows="20" cols="75">Choose a component and grid side and PATTERNIZE!</textarea>
+<br /><br />
+File name: <input id="filename" type="text" id="gridHeight" size="20" value="example_name.slj">
+<br /><br />
+<button type="button" onclick="download()">Download As File</button>
+
+<script type="text/javascript">
+//* COMPONENTS LIST *//
+// INPUT-OUTPUT
+var pulse_button = {"SIZE":[{"X":100,"Y":100}],"ID":0,"TAG":"PULSE_BUTTON","X":0,"Y":0,"INPUTS":[]};
+var toggle_button = {"SIZE":[{"X":100,"Y":100}],"ID":0,"TAG":"TOGGLE_BUTTON","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"ENABLED":false}};
+var light_bulb = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"LIGHT_BULB","X":0,"Y":0,"INPUTS":[]};
+// FLIP FLOPS
+var d_flipflop = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"D_FLIP_FLOP","X":0,"Y":0,"INPUTS":[]};
+var sr_flipflop = {"SIZE":[{"X":70,"Y":80}],"ID":0,"TAG":"SR_FLIP_FLOP","X":0,"Y":0,"INPUTS":[]};
+var jk_flipflop = {"SIZE":[{"X":70,"Y":80}],"ID":0,"TAG":"JK_FLIP_FLOP","X":0,"Y":0,"INPUTS":[]};
+var t_flipflop = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"T_FLIP_FLOP","X":0,"Y":0,"INPUTS":[]};
+var sr_latch = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"SR_LATCH","X":0,"Y":0,"INPUTS":[]};
+// GATES
+var and_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"AND_GATE","X":0,"Y":0,"INPUTS":[]};
+var buffer_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"BUFFER_GATE","X":0,"Y":0,"INPUTS":[]};
+var nand_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"NAND_GATE","X":0,"Y":0,"INPUTS":[]};
+var nor_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"NOR_GATE","X":0,"Y":0,"INPUTS":[]};
+var not_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"NOT_GATE","X":0,"Y":0,"INPUTS":[]};
+var or_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"OR_GATE","X":0,"Y":0,"INPUTS":[]};
+var xor_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"XOR_GATE","X":0,"Y":0,"INPUTS":[]};
+var xnor_gate = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"XNOR_GATE","X":0,"Y":0,"INPUTS":[]};
+// CLOCK
+var ten_clock = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"CLOCK","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"PERIOD":5000}};
+var five_clock = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"CLOCK","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"PERIOD":2000}};
+var two_clock = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"CLOCK","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"PERIOD":1000}};
+var one_clock = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"CLOCK","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"PERIOD":500}};
+var half_clock = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"CLOCK","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"PERIOD":200}};
+var fifth_clock = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"CLOCK","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"PERIOD":100}};
+// OTHER
+var high_constant = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"HIGH_CONSTANT","X":0,"Y":0,"INPUTS":[]};
+var low_constant = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"LOW_CONSTANT","X":0,"Y":0,"INPUTS":[]};
+var ss_display = {"SIZE":[{"X":120,"Y":200}],"ID":0,"TAG":"SEVEN_SEGMENT_DISPLAY","X":0,"Y":0,"INPUTS":[]};
+var dm_display = {"SIZE":[{"X":150,"Y":220}],"ID":0,"TAG":"DOT_MATRIX_DISPLAY_5X7","X":0,"Y":0,"INPUTS":[]};
+var ss_decoder = {"SIZE":[{"X":0,"Y":0}],"ID":0,"TAG":"SEVEN_SEGMENT_DISPLAY_DECODER","X":0,"Y":0,"INPUTS":[]};
+var flashlight = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"FLASHLIGHT","X":0,"Y":0,"INPUTS":[]};
+var speaker = {"SIZE":[{"X":0,"Y":0}],"ID":0,"TAG":"SPEAKER","X":0,"Y":0,"INPUTS":[]};
+var vibration = {"SIZE":[{"X":70,"Y":70}],"ID":0,"TAG":"VIBRATION","X":0,"Y":0,"INPUTS":[]};
+var charge_sensor = {"SIZE":[{"X":100,"Y":70}],"ID":0,"TAG":"CHARGER_PLUGGED_SENSOR","X":0,"Y":0,"INPUTS":[]};
+var light_sensor = {"SIZE":[{"X":0,"Y":0}],"ID":0,"TAG":"LIGHT_SENSOR","X":0,"Y":0,"INPUTS":[]}
+var magnetic_sensor = {"SIZE":[{"X":0,"Y":0}],"ID":0,"TAG":"MAGNETIC_FIELD_SENSOR","X":0,"Y":0,"INPUTS":[]};
+var proximity_sensor = {"SIZE":[{"X":80,"Y":70}],"ID":0,"TAG":"PROXIMITY_SENSOR","X":0,"Y":0,"INPUTS":[]};
+var notification_led = {"SIZE":[{"X":0,"Y":0}],"ID":0,"TAG":"NOTIFICATION_LED","X":0,"Y":0,"INPUTS":[]};
+var rgb_light = {"SIZE":[{"X":90,"Y":90}],"ID":0,"TAG":"RGB_LIGHT","X":0,"Y":0,"INPUTS":[]};
+// PIN SPACING
+var pin_size = 15;
+
+var compArray = [pulse_button,toggle_button,light_bulb,d_flipflop,sr_flipflop,jk_flipflop,t_flipflop,sr_latch,and_gate,buffer_gate,nand_gate,nor_gate,not_gate,or_gate,xor_gate,xnor_gate,ten_clock,five_clock,two_clock,one_clock,half_clock,fifth_clock,high_constant,low_constant,ss_display,dm_display,ss_decoder,flashlight,speaker,vibration,charge_sensor,light_sensor,magnetic_sensor,proximity_sensor,notification_led,rgb_light];
+var sel = document.getElementById("dropDown");
+for(var m = 0; m < compArray.length; m++) {
+    var opt = document.createElement('option');
+    opt.innerHTML = compArray[m].TAG;
+    opt.value = JSON.stringify(compArray[m]);
+    sel.appendChild(opt);
+}
+    
+function patternize() {
+    var e = document.getElementById("dropDown");
+    var selectedComp = JSON.parse(e.options[e.selectedIndex].value);
+
+    var slsCode;
+    slsCode = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
+    slsCode.HEADER.APP_VERSION = 72000;
+
+    var comp = selectedComp;
+    var compWidth = comp.SIZE[0].X;
+    var compHeight = comp.SIZE[0].Y;
+    var gridWidth = document.getElementById("gridWidth").value;
+    var gridHeight = document.getElementById("gridHeight").value;
+    comp.ID = Math.floor(Math.random() * 999999999) + 1;
+    for (var i = 0; i < gridHeight; i++) {
+        for (var j = 0; j < gridWidth; j++) {
+            slsCode.COMPONENTS.push(JSON.parse(JSON.stringify(comp)));
+            comp.ID++;
+            comp.X += compWidth;
+        }
+        comp.X = 0;
+        comp.Y += compHeight;
+    }
+
+    for(var k = 0; k < slsCode.COMPONENTS.length; k++)
+    {
+        delete slsCode.COMPONENTS[k].SIZE;
+    }
+
+    document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+}
+
+function download(){
+    var a = document.body.appendChild(
+        document.createElement("a")
+    );
+    a.download = document.getElementById("filename").value;
+    a.href = "data:text/html," + document.getElementById("codeDisplay").innerHTML;
+    a.click();
+}
+
+</script>
+</body>
+</html>
