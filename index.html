@@ -1,6 +1,9 @@
 ﻿<!DOCTYPE html>
 <html>
-<body>
+<head>
+<script type="text/javascript" src="shape.js"></script>
+</head>
+<body onLoad='init2()'>
 <div><font size="12">SLS Patternizer</font><br />by 🦖Corbin Trexler</div>
 <br /><br />
 <select id="dropDown"></select>
@@ -10,13 +13,22 @@ Grid Height: <input type="text" id="gridHeight" size="2" value="5">
 <br /><br />
 <button type="button" onclick="patternize()">Patternize!</button>
 <br /><br />
-<textarea id="codeDisplay" rows="20" cols="75">Choose a component and grid size and PATTERNIZE!</textarea>
+<textarea id="codeDisplay" rows="35" cols="50">Choose a component and grid size and PATTERNIZE!</textarea>
+<canvas id="canvas1" width="600" height="530" style="border:1px solid #d3d3d3;"></canvas>
 <br /><br />
 File name: <input id="filename" type="text" id="gridHeight" size="20" value="example_name.slj">
 <br /><br />
 <button type="button" onclick="download()">Download As File</button>
 
 <script type="text/javascript">
+var s = new CanvasState(document.getElementById('canvas1'));
+s.addShape(new Shape(-250,-250,1000,1000, 'rgba(60, 60, 60, 1)'));
+//s.addShape(new Shape(40,40,50,50)); // The default is gray
+//s.addShape(new Shape(60,140,40,60, 'lightskyblue'));
+// Lets make some partially transparent
+//s.addShape(new Shape(80,150,60,30, 'rgba(127, 255, 212, .5)'));
+//s.addShape(new Shape(125,80,30,80, 'rgba(245, 222, 179, .7)'));
+
 //* COMPONENTS LIST *//
 // INPUT-OUTPUT
 var pulse_button = {"SIZE":[{"X":100,"Y":100}],"ID":0,"TAG":"PULSE_BUTTON","X":0,"Y":0,"INPUTS":[]};
@@ -88,6 +100,7 @@ function patternize() {
     for (var i = 0; i < gridHeight; i++) {
         for (var j = 0; j < gridWidth; j++) {
             slsCode.COMPONENTS.push(JSON.parse(JSON.stringify(comp)));
+            s.addShape(new Shape(comp.X,comp.Y,compWidth/1.1,compHeight/1.1, 'rgba(48, 162, 255, 1)'));
             comp.ID++;
             comp.X += compWidth;
         }
