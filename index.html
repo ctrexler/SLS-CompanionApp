@@ -3,7 +3,7 @@
 <head>
 <script type="text/javascript" src="shape.js"></script>
 </head>
-<body onLoad='init2()'>
+<body>
 <div><font size="12">SLS Patternizer</font><br />by 🦖Corbin Trexler</div>
 <br /><br />
 <select id="dropDown"></select>
@@ -21,8 +21,9 @@ File name: <input id="filename" type="text" id="gridHeight" size="20" value="exa
 <button type="button" onclick="download()">Download As File</button>
 
 <script type="text/javascript">
+var slsCode;
 var s = new CanvasState(document.getElementById('canvas1'));
-s.addShape(new Shape(-250,-250,1000,1000, 'rgba(60, 60, 60, 1)'));
+s.addShape(new Shape(-500,-500,1500,1500, 'rgba(60, 60, 60, 1)'),"id","tag");
 //s.addShape(new Shape(40,40,50,50)); // The default is gray
 //s.addShape(new Shape(60,140,40,60, 'lightskyblue'));
 // Lets make some partially transparent
@@ -87,7 +88,6 @@ function patternize() {
     var e = document.getElementById("dropDown");
     var selectedComp = JSON.parse(e.options[e.selectedIndex].value);
 
-    var slsCode;
     slsCode = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
     slsCode.HEADER.APP_VERSION = 72000;
 
@@ -100,7 +100,7 @@ function patternize() {
     for (var i = 0; i < gridHeight; i++) {
         for (var j = 0; j < gridWidth; j++) {
             slsCode.COMPONENTS.push(JSON.parse(JSON.stringify(comp)));
-            s.addShape(new Shape(comp.X,comp.Y,compWidth/1.1,compHeight/1.1, 'rgba(48, 162, 255, 1)'));
+            s.addShape(new Shape(comp.X,comp.Y,compWidth/1.1,compHeight/1.1,'rgba(48, 162, 255, 1)', comp.ID, comp.TAG));
             comp.ID++;
             comp.X += compWidth;
         }

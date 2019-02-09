@@ -9,7 +9,7 @@
 
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(x, y, w, h, fill) {
+function Shape(x, y, w, h, fill, id, tag) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
@@ -18,13 +18,14 @@ function Shape(x, y, w, h, fill) {
   this.w = w || 1;
   this.h = h || 1;
   this.fill = fill || '#AAAAAA';
-  this.stroke = '#555555';
+  this.id = id || "idddddd";
+  this.tag = tag || "tag";
 }
 
 // Draws this shape to a given context
 Shape.prototype.draw = function(ctx) {
   ctx.fillStyle = this.fill;
-  ctx.strokeStyle = this.stroke
+  ctx.strokeStyle = '#555555';
   ctx.lineWidth = 4;
   ctx.strokeRect(this.x,this.y,this.w,this.h);
   ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -119,6 +120,13 @@ function CanvasState(canvas) {
     }
   }, true);
   canvas.addEventListener('mouseup', function(e) {
+    for (var j = 0; j < slsCode.COMPONENTS.length; j++) {
+        if(slsCode.COMPONENTS[j].ID == myState.selection.id) {
+            slsCode.COMPONENTS[j].X = myState.selection.x;
+            slsCode.COMPONENTS[j].Y = myState.selection.y;
+            document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+        }
+    }
     myState.dragging = false;
   }, true);
   // double click for making new shapes
