@@ -115,18 +115,19 @@ function CanvasState(canvas) {
       // We don't want to drag the object by its top-left corner, we want to drag it
       // from where we clicked. Thats why we saved the offset and use it here
       myState.selection.x = mouse.x - myState.dragoffx;
-      myState.selection.y = mouse.y - myState.dragoffy;   
-      myState.valid = false; // Something's dragging so we must redraw
-    }
-  }, true);
-  canvas.addEventListener('mouseup', function(e) {
-    for (var j = 0; j < slsCode.COMPONENTS.length; j++) {
+      myState.selection.y = mouse.y - myState.dragoffy;
+      for (var j = 0; j < slsCode.COMPONENTS.length; j++) {
         if(slsCode.COMPONENTS[j].ID == myState.selection.id) {
             slsCode.COMPONENTS[j].X = myState.selection.x;
             slsCode.COMPONENTS[j].Y = myState.selection.y;
             document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
         }
     }
+      myState.valid = false; // Something's dragging so we must redraw
+    }
+  }, true);
+  canvas.addEventListener('mouseup', function(e) {
+    
     myState.dragging = false;
   }, true);
   // double click for making new shapes
