@@ -9,7 +9,7 @@
 
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(x, y, w, h, fill, id, shapeType) {
+function Shape(x, y, w, h, fill, stroke, id, shapeType) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
@@ -17,7 +17,8 @@ function Shape(x, y, w, h, fill, id, shapeType) {
   this.y = y || 0;
   this.w = w || 1;
   this.h = h || 1;
-  this.fill = fill || '#AAAAAA';
+  this.fill = fill || "#FFFFFF";
+  this.stroke = stroke || "#000000"
   this.id = id || "id";
   this.shapeType = shapeType || "shapeType";
 }
@@ -25,8 +26,8 @@ function Shape(x, y, w, h, fill, id, shapeType) {
 // Draws this shape to a given context
 Shape.prototype.draw = function(ctx) {
   ctx.fillStyle = this.fill;
-  ctx.strokeStyle = '#555555';
-  ctx.lineWidth = 4;
+  ctx.strokeStyle = this.stroke;
+  ctx.lineWidth = 5;
   if(this.shapeType == "rectangle") {
     ctx.strokeRect(this.x,this.y,this.w,this.h);
     ctx.fillRect(this.x, this.y, this.w, this.h);
