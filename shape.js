@@ -9,7 +9,7 @@
 
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(x, y, w, h, fill, stroke, id, shapeType) {
+function Shape(x, y, w, h, fill, stroke, id, name, shapeType) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
@@ -20,7 +20,12 @@ function Shape(x, y, w, h, fill, stroke, id, shapeType) {
   this.fill = fill || "#FFFFFF";
   this.stroke = stroke || "#000000"
   this.id = id || "id";
+  this.name = name || "";
   this.shapeType = shapeType || "shapeType";
+}
+
+function Pin() {
+
 }
 
 // Draws this shape to a given context
@@ -54,12 +59,24 @@ Shape.prototype.draw = function(ctx) {
       }
     }
   }
+  else if(this.shapeType == "ssdisplay") {
+    ctx.strokeRect(this.x,this.y,this.w,this.h);
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.font="200px sans-serif";
+    ctx.fillStyle = "rgba(44, 44, 44, 1)";
+    ctx.textAlign = "center";
+    ctx.fillText("8", this.x + (this.w/2), this.y + (this.h - 20));
+  }
   else if (this.shapeType == "circle") {
     ctx.beginPath();
     ctx.arc(this.x + (this.w/2), this.y + (this.h/2), this.w/2, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.fill();
   }
+  ctx.font="8px sans-serif";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText(this.name, this.x + (this.w/2), this.y + this.h + 10);
 }
 
 // Determine if a point is inside the shape's bounds
@@ -162,10 +179,10 @@ function CanvasState(canvas) {
     myState.dragging = false;
   }, true);
   // double click for making new shapes
-  canvas.addEventListener('dblclick', function(e) {
-    var mouse = myState.getMouse(e);
-    myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, mouse.x, mouse.y, 'rgba(0,255,0,.6)'));
-  }, true);
+  // canvas.addEventListener('dblclick', function(e) {
+  //   var mouse = myState.getMouse(e);
+  //   mystate.addShape(new Shape(mouse.x - 10, mouse.y - 10, comp.TRAITS.SIZE.W, comp.TRAITS.SIZE.H, comp.TRAITS.FILL, comp.TRAITS.STROKE, comp.ID, comp.TAG, comp.TRAITS.SHAPETYPE));
+  // }, true);
   
   // **** Options! ****
   
