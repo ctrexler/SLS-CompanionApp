@@ -228,7 +228,7 @@ CanvasState.prototype.draw = function() {
       ctx.strokeStyle = this.selectionColor;
       ctx.lineWidth = this.selectionWidth;
       var mySel = this.selection;
-      if(mySel.shapeType == "rectangle") {
+      if(mySel.shapeType != "circle") {
         ctx.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
       }
       else if (mySel.shapeType == "circle") {
