@@ -9,7 +9,7 @@
 
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(x, y, w, h, fill, id, tag) {
+function Shape(x, y, w, h, fill, id, shapeType) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
@@ -18,8 +18,8 @@ function Shape(x, y, w, h, fill, id, tag) {
   this.w = w || 1;
   this.h = h || 1;
   this.fill = fill || '#AAAAAA';
-  this.id = id || "idddddd";
-  this.tag = tag || "tag";
+  this.id = id || "id";
+  this.shapeType = shapeType || "shapeType";
 }
 
 // Draws this shape to a given context
@@ -27,8 +27,16 @@ Shape.prototype.draw = function(ctx) {
   ctx.fillStyle = this.fill;
   ctx.strokeStyle = '#555555';
   ctx.lineWidth = 4;
-  ctx.strokeRect(this.x,this.y,this.w,this.h);
-  ctx.fillRect(this.x, this.y, this.w, this.h);
+  if(this.shapeType == "rectangle") {
+    ctx.strokeRect(this.x,this.y,this.w,this.h);
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+  }
+  else if (this.shapeType == "circle") {
+    ctx.beginPath();
+    ctx.arc(this.x + (this.w/2), this.y + (this.h/2), this.w/2, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.fill();
+  }
 }
 
 // Determine if a point is inside the shape's bounds
@@ -138,8 +146,8 @@ function CanvasState(canvas) {
   
   // **** Options! ****
   
-  this.selectionColor = '#CC0000';
-  this.selectionWidth = 2;  
+  this.selectionColor = '#00FF00';
+  this.selectionWidth = 4;  
   this.interval = 30;
   setInterval(function() { myState.draw(); }, myState.interval);
 }
@@ -180,7 +188,14 @@ CanvasState.prototype.draw = function() {
       ctx.strokeStyle = this.selectionColor;
       ctx.lineWidth = this.selectionWidth;
       var mySel = this.selection;
-      ctx.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
+      if(mySel.shapeType == "rectangle") {
+        ctx.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
+      }
+      else if (mySel.shapeType == "circle") {
+        ctx.beginPath();
+        ctx.arc(mySel.x + (mySel.w/2), mySel.y + (mySel.h/2), mySel.w/2, 0, 2 * Math.PI);
+        ctx.stroke();
+      }
     }
     
     // ** Add stuff you want drawn on top all the time here **
