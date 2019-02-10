@@ -1,2 +1,2 @@
-# SLS-Patternizer
-A script that generates patterns of components for Smart Logic Simulator
+# SLS-CompanionApp
+An (unofficial) companion web app to make complex setups in Smart Logic Simulator easier to accomplish.
