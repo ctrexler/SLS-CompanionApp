@@ -32,6 +32,28 @@ Shape.prototype.draw = function(ctx) {
     ctx.strokeRect(this.x,this.y,this.w,this.h);
     ctx.fillRect(this.x, this.y, this.w, this.h);
   }
+  else if(this.shapeType == "pulse") {
+    ctx.strokeRect(this.x,this.y,this.w,this.h);
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.beginPath();
+    ctx.arc(this.x + (this.w/2), this.y + (this.h/2), this.w/2.2, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(211, 47, 46, 1)";
+    ctx.fill();
+  }
+  else if(this.shapeType == "dmdisplay") {
+    ctx.strokeRect(this.x,this.y,this.w,this.h);
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+    for(var o = 0; o < 5; o++) {
+      for(var p = 0; p < 7; p++) {
+        ctx.beginPath();
+        ctx.arc(this.x + ((this.w/5) * (o + 1)) - this.w/10, this.y + ((this.h/7) * (p + 1)) - this.h/14, (this.w/7)/2, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(44, 44, 44, 1)";
+        ctx.fill();
+      }
+    }
+  }
   else if (this.shapeType == "circle") {
     ctx.beginPath();
     ctx.arc(this.x + (this.w/2), this.y + (this.h/2), this.w/2, 0, 2 * Math.PI);

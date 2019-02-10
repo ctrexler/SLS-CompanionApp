@@ -9,7 +9,7 @@ s.addShape(new Shape(-500,-500,1500,1500,"rgba(39, 42, 57, 1)","rgba(39, 42, 57,
 
 //* COMPONENTS LIST *//
 // INPUT-OUTPUT
-var pulse_button = {"TRAITS":{"NAME":"","SIZE":{"W":100,"H":100},"FILL":"rgba(254, 193, 7, 1)","STROKE":"rgba(231, 174, 9, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"PULSE_BUTTON","X":0,"Y":0,"INPUTS":[]};
+var pulse_button = {"TRAITS":{"NAME":"","SIZE":{"W":100,"H":100},"FILL":"rgba(254, 193, 7, 1)","STROKE":"rgba(231, 174, 9, 1)","SHAPETYPE":"pulse","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"PULSE_BUTTON","X":0,"Y":0,"INPUTS":[]};
 var toggle_button = {"TRAITS":{"NAME":"","SIZE":{"W":100,"H":100},"FILL":"rgba(211, 47, 46, 1)","STROKE":"rgba(235, 168, 28, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"TOGGLE_BUTTON","X":0,"Y":0,"INPUTS":[],"ARGUMENTS":{"ENABLED":false}};
 var light_bulb = {"TRAITS":{"NAME":"","SIZE":{"W":70,"H":70},"FILL":"rgba(28, 28, 28, 1)","STROKE":"rgba(60, 60, 60, 1)","SHAPETYPE":"circle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"LIGHT_BULB","X":0,"Y":0,"INPUTS":[]};
 // FLIP FLOPS
@@ -38,7 +38,7 @@ var fifth_clock = {"TRAITS":{"NAME":"","SIZE":{"W":70,"H":70},"FILL":"rgba(2, 11
 var high_constant = {"TRAITS":{"NAME":"","SIZE":{"W":70,"H":70},"FILL":"rgba(76, 176, 80, 1)","STROKE":"rgba(69, 157, 71, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"HIGH_CONSTANT","X":0,"Y":0,"INPUTS":[]};
 var low_constant = {"TRAITS":{"NAME":"","SIZE":{"W":70,"H":70},"FILL":"rgba(254, 87, 34, 1)","STROKE":"rgba(229, 75, 21, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"LOW_CONSTANT","X":0,"Y":0,"INPUTS":[]};
 var ss_display = {"TRAITS":{"NAME":"","SIZE":{"W":120,"H":200},"FILL":"rgba(28, 28, 28, 1)","STROKE":"rgba(44, 44, 44, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"SEVEN_SEGMENT_DISPLAY","X":0,"Y":0,"INPUTS":[]};
-var dm_display = {"TRAITS":{"NAME":"","SIZE":{"W":150,"H":220},"FILL":"rgba(28, 28, 28, 1)","STROKE":"rgba(44, 44, 44, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"DOT_MATRIX_DISPLAY_5X7","X":0,"Y":0,"INPUTS":[]};
+var dm_display = {"TRAITS":{"NAME":"","SIZE":{"W":150,"H":220},"FILL":"rgba(28, 28, 28, 1)","STROKE":"rgba(44, 44, 44, 1)","SHAPETYPE":"dmdisplay","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"DOT_MATRIX_DISPLAY_5X7","X":0,"Y":0,"INPUTS":[]};
 var ss_decoder = {"TRAITS":{"NAME":"","SIZE":{"W":60,"H":180},"FILL":"rgba(28, 28, 28, 1)","STROKE":"rgba(44, 44, 44, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"SEVEN_SEGMENT_DISPLAY_DECODER","X":0,"Y":0,"INPUTS":[]};
 var flashlight = {"TRAITS":{"NAME":"","SIZE":{"W":70,"H":70},"FILL":"rgba(103, 59, 183, 1)","STROKE":"rgba(81, 46, 166, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"FLASHLIGHT","X":0,"Y":0,"INPUTS":[]};
 var speaker = {"TRAITS":{"NAME":"","SIZE":{"W":80,"H":340},"FILL":"rgba(158, 158, 158, 1)","STROKE":"rgba(117, 117, 117, 1)","SHAPETYPE":"rectangle","PINS":{"INPUT":"","OUTPUT":""}},"ID":0,"TAG":"SPEAKER","X":0,"Y":0,"INPUTS":[]};
