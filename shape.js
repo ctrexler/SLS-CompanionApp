@@ -7,6 +7,12 @@
 // Free to use and distribute at will
 // So long as you are nice to people, etc
 
+
+//Global Canvas State
+s = "s";
+function globalCavasState(state) {
+  s = state;
+}
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 function Shape(x, y, w, h, fill, stroke, id, name, shapeType) {
@@ -175,14 +181,15 @@ function CanvasState(canvas) {
     }
   }, true);
   canvas.addEventListener('mouseup', function(e) {
-    
     myState.dragging = false;
   }, true);
   // double click for making new shapes
-  // canvas.addEventListener('dblclick', function(e) {
-  //   var mouse = myState.getMouse(e);
-  //   mystate.addShape(new Shape(mouse.x - 10, mouse.y - 10, comp.TRAITS.SIZE.W, comp.TRAITS.SIZE.H, comp.TRAITS.FILL, comp.TRAITS.STROKE, comp.ID, comp.TAG, comp.TRAITS.SHAPETYPE));
-  // }, true);
+  canvas.addEventListener('dblclick', function(e) {
+    var mouse = myState.getMouse(e);
+    //myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, selectedComp.TRAITS.SIZE.W, 20, "rgba(0,255,0,.6)", "rgba(255,255,255,1)","id","name","rectangle"));
+    //s.addShape(new Shape(mouse.x - 10, mouse.y - 10, selectedComp.TRAITS.SIZE.W, selectedComp.TRAITS.SIZE.H, selectedComp.TRAITS.FILL, selectedComp.TRAITS.STROKE,id,selectedComp.TRAITS.NAME,selectedComp.TRAITS.SHAPETYPE));
+    addComp(mouse.x, mouse.y);
+  }, true);
   
   // **** Options! ****
   

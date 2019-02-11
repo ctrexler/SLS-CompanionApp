@@ -1,5 +1,6 @@
 var slsCode = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
 var s = new CanvasState(document.getElementById('canvas1'));
+globalCavasState(s);
 s.addShape(new Shape(-500,-500,1500,1500,"rgba(39, 42, 57, 1)","rgba(39, 42, 57, 1)","id", null, "rectangle"));
 //s.addShape(new Shape(40,40,50,50)); // The default is gray
 //s.addShape(new Shape(60,140,40,60, 'lightskyblue'));
@@ -60,34 +61,51 @@ for(var m = 0; m < compArray.length; m++) {
     opt.value = JSON.stringify(compArray[m]);
     sel.appendChild(opt);
 }
+var selectedComp = pulse_button;
+var e = document.getElementById("dropDown");
     
 function patternize() {
-    var e = document.getElementById("dropDown");
-    var selectedComp = JSON.parse(e.options[e.selectedIndex].value);
+    e = document.getElementById("dropDown");
+    selectedComp = JSON.parse(e.options[e.selectedIndex].value);
 
     var comp = selectedComp;
     var compWidth = comp.TRAITS.SIZE.W;
     var compHeight = comp.TRAITS.SIZE.H;
     var gridWidth = document.getElementById("gridWidth").value;
     var gridHeight = document.getElementById("gridHeight").value;
-    comp.ID = Math.floor(Math.random() * 999999999) + 1;
     for (var i = 0; i < gridHeight; i++) {
         for (var j = 0; j < gridWidth; j++) {
-            slsCode.COMPONENTS.push(JSON.parse(JSON.stringify(comp)));
-            s.addShape(new Shape(comp.X,comp.Y,compWidth/1.1,compHeight/1.1, comp.TRAITS.FILL, comp.TRAITS.STROKE, comp.ID, comp.TRAITS.NAME, comp.TRAITS.SHAPETYPE));
-            comp.ID++;
+            addComp(comp.X, comp.Y);
             comp.X += compWidth;
         }
         comp.X = 0;
         comp.Y += compHeight;
     }
-
     for(var k = 0; k < slsCode.COMPONENTS.length; k++)
     {
         delete slsCode.COMPONENTS[k].TRAITS;
     }
+    document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+}
+
+function addComp(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+    e = document.getElementById("dropDown");
+    selectedComp = JSON.parse(e.options[e.selectedIndex].value);
+    var comp = selectedComp;
+    comp.X = this.x;
+    comp.Y = this.y;
+    comp.ID = randomID();
+    s.addShape(new Shape(comp.X,comp.Y,comp.TRAITS.SIZE.W/1.1,comp.TRAITS.SIZE.H/1.1, comp.TRAITS.FILL, comp.TRAITS.STROKE, comp.ID, comp.TRAITS.NAME, comp.TRAITS.SHAPETYPE));
+    delete comp.TRAITS;
+    slsCode.COMPONENTS.push(JSON.parse(JSON.stringify(comp)));
 
     document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+}
+
+function randomID() {
+    return Math.floor(Math.random() * 999999999) + 1;
 }
 
 function download(){
