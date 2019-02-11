@@ -1,12 +1,6 @@
 var slsCode = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
 var s = new CanvasState(document.getElementById('canvas1'));
 globalCavasState(s);
-s.addShape(new Shape(-500,-500,1500,1500,"rgba(39, 42, 57, 1)","rgba(39, 42, 57, 1)","id", null, "rectangle"));
-//s.addShape(new Shape(40,40,50,50)); // The default is gray
-//s.addShape(new Shape(60,140,40,60, 'lightskyblue'));
-// Lets make some partially transparent
-//s.addShape(new Shape(80,150,60,30, 'rgba(127, 255, 212, .5)'));
-//s.addShape(new Shape(125,80,30,80, 'rgba(245, 222, 179, .7)'));
 
 //* COMPONENTS LIST *//
 // INPUT-OUTPUT
