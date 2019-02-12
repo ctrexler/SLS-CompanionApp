@@ -13,6 +13,7 @@ s = "s";
 function globalCavasState(state) {
   s = state;
 }
+
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 function Shape(x, y, w, h, fill, stroke, id, name, shapeType) {
@@ -163,6 +164,24 @@ function CanvasState(canvas) {
       myState.valid = false; // Need to clear the old selection border
     }
   }, true);
+
+  // Prevent scrolling when touching the canvas
+  document.body.addEventListener("touchstart", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+  document.body.addEventListener("touchend", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+  document.body.addEventListener("touchmove", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+
   canvas.addEventListener('mousemove', function(e) {
     if (myState.dragging){
       var mouse = myState.getMouse(e);
@@ -185,11 +204,64 @@ function CanvasState(canvas) {
   }, true);
   // double click for making new shapes
   canvas.addEventListener('dblclick', function(e) {
-    var mouse = myState.getMouse(e);
-    //myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, selectedComp.TRAITS.SIZE.W, 20, "rgba(0,255,0,.6)", "rgba(255,255,255,1)","id","name","rectangle"));
-    //s.addShape(new Shape(mouse.x - 10, mouse.y - 10, selectedComp.TRAITS.SIZE.W, selectedComp.TRAITS.SIZE.H, selectedComp.TRAITS.FILL, selectedComp.TRAITS.STROKE,id,selectedComp.TRAITS.NAME,selectedComp.TRAITS.SHAPETYPE));
-    addComp(mouse.x, mouse.y);
+    if(tapFlag == 1) {
+      addComp(0, 0);
+      tapFlag = 0;
+    } else {
+      var mouse = myState.getMouse(e);
+      addComp(mouse.x, mouse.y);
+    }
   }, true);
+
+  // Set up touch events for mobile, etc
+  canvas.addEventListener("touchstart", function (e) {
+    mousePos = getTouchPos(canvas, e);
+    var touch = e.touches[0];
+    var mouseEvent = new MouseEvent("mousedown", {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+  }, false);
+  // canvas.addEventListener("touchend", function (e) {
+  //   var mouseEvent = new MouseEvent("mouseup", {});
+  //   canvas.dispatchEvent(mouseEvent);
+  // }, false);
+  canvas.addEventListener("touchmove", function (e) {
+    var touch = e.touches[0];
+    var mouseEvent = new MouseEvent("mousemove", {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+  }, false);
+  // Get the position of a touch relative to the canvas
+  function getTouchPos(canvasDom, touchEvent) {
+    var rect = canvasDom.getBoundingClientRect();
+    return {
+      x: touchEvent.touches[0].clientX - rect.left,
+      y: touchEvent.touches[0].clientY - rect.top
+    };
+  }
+  var timeout;
+  var lastTap = 0;
+  var tapFlag = 0;
+  canvas.addEventListener('touchend', function(e) {
+      var currentTime = new Date().getTime();
+      var tapLength = currentTime - lastTap;
+      clearTimeout(timeout);
+      if (tapLength < 500 && tapLength > 0) {
+        tapFlag = 1;
+        var mouseEvent = new MouseEvent("dblclick", {});
+        canvas.dispatchEvent(mouseEvent);
+        event.preventDefault();
+      } else {
+          timeout = setTimeout(function() {
+              clearTimeout(timeout);
+          }, 500);
+      }
+      lastTap = currentTime;
+  });
   
   // **** Options! ****
   
