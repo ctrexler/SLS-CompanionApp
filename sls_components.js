@@ -1,4 +1,5 @@
-var slsCode = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
+var slsdefault = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
+var slsCode = JSON.parse(JSON.stringify(slsdefault))
 var s = new CanvasState(document.getElementById('canvas1'));
 globalCavasState(s);
 
@@ -109,4 +110,16 @@ function download(){
     a.download = document.getElementById("filename").value;
     a.href = "data:text/html," + document.getElementById("codeDisplay").innerHTML;
     a.click();
+}
+
+function clearCanvas() {
+    if (confirm("Are you sure you want to clear the canvas?! There's no going back!")) {
+        s.shapes = [];
+        const context = canvas1.getContext('2d');
+        context.clearRect(0, 0, canvas1.width, canvas1.height);
+        slsCode = JSON.parse(JSON.stringify(slsdefault))
+        document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+    } else {
+      var txt = "You pressed Cancel!";
+    }
 }

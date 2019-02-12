@@ -6,6 +6,7 @@
             html, body {
                 background-color: #272a39;
                 color: white;
+                font-size: 30px;
                 overflow: hidden;
             }
             #title {
@@ -19,7 +20,7 @@
             }
             #d {
                 position: absolute;
-                bottom: 0;
+                bottom: 20px;
                 left: 20px;
                 z-index: 100;
             }
@@ -36,17 +37,24 @@
                 display: none;
             }
             #gridmaker {
-                display: flex;
+                display: none;
+                position: relative;
                 align-items: center;
+                background-color:#0277d6;
+                border: 1px solid white;
+                padding: 10px;
             }
             #download {
-                float: left;
-                margin-bottom: 20px;
+                display: none;
+                position: relative;
+                background-color:#0277d6;
+                border: 1px solid white;
+                padding: 10px;
             }
             #canvas1 {
                 position: relative;
                 z-index: 0;
-                top: 40px;
+                top: 10px;
                 border: 1px solid #999;
                 background-color: #272a39;
             }
@@ -54,34 +62,43 @@
                 background-color: #0277d6; /* Green */
                 color: white;
                 border: 1px solid white;
-                padding: 15px 32px;
+                padding: 5px 5px;
                 text-align: center;
                 text-decoration: none;
                 display: inline-block;
                 font-size: 16px;
                 cursor: pointer;
-                }
+            }
+            .btn-group button {
+                font-size: 40px;
+                background-color: #0277d6; /* Green background */
+                border: 1px solid white; /* Green border */
+                color: white; /* White text */
+                padding: 11px 15px; /* Some padding */
+                margin-right: 5px;
+                cursor: pointer; /* Pointer/hand icon */
+            }
                 
             .styled-select select {
                 background: transparent;
                 width: 268px;
                 color: white;
                 padding: 5px;
-                font-size: 16px;
+                font-size: 30px;
                 line-height: 1;
                 border: 0;
                 border-radius: 0;
-                height: 34px;
+                height: 40px;
                 background-color: #0277d6;
                 -webkit-appearance: none;
             }
             .styled-select {
                 width: 240px;
-                height: 34px;
+                height: 40px;
                 overflow: hidden;
                 position: absolute;
                 margin-right: 20px;
-                top: 60px;
+                top: 40px;
                 right: 0;
                 z-index: 100;
                 background-color: #0277d6;
@@ -98,6 +115,27 @@
                     cd.style.display = 'inline';
                 }
             };
+            function button_info() {
+                // TODO
+            }
+            function button_download() {
+                var dl = document.getElementById("download");
+                if (dl.style.display == 'block') {
+                    dl.style.display = 'none';
+                }
+                else {
+                    dl.style.display = 'block';
+                }
+            }
+            function button_grid() {
+                var dl = document.getElementById("gridmaker");
+                if (dl.style.display == 'flex') {
+                    dl.style.display = 'none';
+                }
+                else {
+                    dl.style.display = 'flex';
+                }
+            }
         </script>
     </head>
     <body>
@@ -106,26 +144,29 @@
                 <select id="dropDown"></select>
             </div>
             <div id="d">
-                <br /><br />
                 <div id="gridmaker">
                     <span>
-                        Grid Width: <input type="text" id="gridWidth" size="2" value="5" style="margin-right: 10px; margin-bottom: 10px"><br />
-                        Grid Height: <input type="text" id="gridHeight" size="2" value="5" style="margin-right: 10px">
+                        Grid Width: <input type="text" id="gridWidth" size="2" value="5" style="font-size: 30px; margin-right: 10px; margin-bottom: 10px"><br />
+                        Grid Height: <input type="text" id="gridHeight" size="2" value="5" style="font-size: 30px; margin-right: 10px">
                     </span>
-                    <button type="button" onclick="patternize()">Patternize!</button>
+                    <button type="button" onclick="patternize()" style="font-size:40px">Patternize!</button>
                 </div>
-                <br /><br />
                 <div id="download">
-                    File name: <input id="filename" type="text" id="gridHeight" size="20" value="example_name.slj">
-                    <button type="button" onclick="download()">Download As File</button>
+                    <input id="filename" type="text" id="gridHeight" size="25" value="example_name.slj" style="font-size: 30px;">
+                    <button type="button" onclick="download()" style="font-size:40px">Download</button>
                 </div>
-                <br /><br />
+                <div class="btn-group">
+                    <button style="font-size: 50px; padding: 0px 18px 8px 18px" onclick="button_infod()">🛈</button>
+                    <button onclick="button_download()">💾</button>
+                    <button style="font-size: 55px; padding: 3px 18px 4px 18px" onclick="button_grid()">▦</button>
+                    <button onclick="clearCanvas()">❌</button>
+                </div>
                 <span id="title">SLS Companion App</span><br /><span id="credits">by 🦖Corbin Trexler</span>
             </div>
             <div id="code">
-                <textarea id="codeDisplay" rows="50" cols="60">Choose a component and grid size and PATTERNIZE!</textarea>
+                <textarea id="codeDisplay" rows="25" cols="50">Choose a component and grid size and PATTERNIZE!</textarea>
                 <br />
-                <button type="button" id="toggleCode" onclick="toggleCodeDisplay()">Hide/Show Code</button>
+                <button type="button" id="toggleCode" onclick="toggleCodeDisplay()" style="font-size:30px">Hide/Show Code</button>
             </div>
         <script type="text/javascript" src="sls_components.js"></script>
     </body>
