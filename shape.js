@@ -16,23 +16,91 @@ function globalCavasState(state) {
 
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(x, y, w, h, fill, stroke, id, name, shapeType) {
+function Shape(comp) {
   // This is a very simple and unsafe constructor. All we're doing is checking if the values exist.
   // "x || 0" just means "if there is a value for x, use that. Otherwise use 0."
   // But we aren't checking anything else! We could put "Lalala" for the value of x 
-  this.x = x || 0;
-  this.y = y || 0;
-  this.w = w || 1;
-  this.h = h || 1;
-  this.fill = fill || "#FFFFFF";
-  this.stroke = stroke || "#000000"
-  this.id = id || "id";
-  this.name = name || "";
-  this.shapeType = shapeType || "shapeType";
+  this.x = comp.X || 0;
+  this.y = comp.Y || 0;
+  this.w = comp.TRAITS.SIZE.W || 1;
+  this.h = comp.TRAITS.SIZE.H || 1;
+  this.fill = comp.TRAITS.FILL || "#FFFFFF";
+  this.stroke = comp.TRAITS.STROKE || "#000000"
+  this.id = comp.TRAITS.ID || "id";
+  this.name = comp.TRAITS.NAME || "";
+  this.shapeType = comp.TRAITS.SHAPETYPE || "shapeType";
+  this.pinsN = comp.TRAITS.PINS.N || 0;
+  this.pinsE = comp.TRAITS.PINS.E || 0;
+  this.pinsS = comp.TRAITS.PINS.S || 0;
+  this.pinsW = comp.TRAITS.PINS.W || 0;
 }
 
-function Pin() {
+function Pins(ctx,thisShape) {
+  ctx.strokeStyle = "#AAAAAA";
 
+  //N
+  var spacingN = thisShape.w/(parseInt(thisShape.pinsN) + 1);
+  var spaceCount = spacingN;
+  for(var pN = 0; pN < thisShape.pinsN; pN++) {
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(thisShape.x + spaceCount, thisShape.y - 30, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(thisShape.x + spaceCount, thisShape.y - 20);
+    ctx.lineTo(thisShape.x + spaceCount, thisShape.y - 2);
+    ctx.stroke();
+    spaceCount += spacingN;
+  }
+
+  //E
+  var spacingE = thisShape.h/(parseInt(thisShape.pinsE) + 1);
+  spaceCount = spacingE;
+  for(var pE = 0; pE < thisShape.pinsE; pE++) {
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(thisShape.x + thisShape.w + 30, thisShape.y + spaceCount, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(thisShape.x + thisShape.w + 20, thisShape.y + spaceCount);
+    ctx.lineTo(thisShape.x + thisShape.w + 2, thisShape.y + spaceCount);
+    ctx.stroke();
+    spaceCount += spacingE;
+  }
+
+  //S
+  var spacingS = thisShape.w/(parseInt(thisShape.pinsS) + 1);
+  spaceCount = spacingS;
+  for(var pS = 0; pS < thisShape.pinsS; pS++) {
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(thisShape.x + spaceCount, thisShape.y + thisShape.h + 30, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(thisShape.x + spaceCount, thisShape.y + thisShape.h + 20);
+    ctx.lineTo(thisShape.x + spaceCount, thisShape.y + thisShape.h + 2);
+    ctx.stroke();
+    spaceCount += spacingS;
+  }
+
+  //W
+  var spacingW = thisShape.h/(parseInt(thisShape.pinsW) + 1);
+  spaceCount = spacingW;
+  for(var pW = 0; pW < thisShape.pinsW; pW++) {
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(thisShape.x - 30, thisShape.y + spaceCount, 10, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(thisShape.x - 20, thisShape.y + spaceCount);
+    ctx.lineTo(thisShape.x - 2, thisShape.y + spaceCount);
+    ctx.stroke();
+    spaceCount += spacingW;
+  }
 }
 
 // Draws this shape to a given context
@@ -80,6 +148,7 @@ Shape.prototype.draw = function(ctx) {
     ctx.stroke();
     ctx.fill();
   }
+  Pins(ctx, this);
   ctx.font="8px sans-serif";
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
@@ -120,6 +189,7 @@ function CanvasState(canvas) {
   
   this.valid = false; // when set to false, the canvas will redraw everything
   this.shapes = [];  // the collection of things to be drawn
+  this.shapesToConnect = [];
   this.dragging = false; // Keep track of when we are dragging
   // the current selected object. In the future we could turn this into an array for multiple selection
   this.selection = null;
@@ -143,10 +213,14 @@ function CanvasState(canvas) {
     var mx = mouse.x;
     var my = mouse.y;
     var shapes = myState.shapes;
+    var shapesToConnect = myState.shapesToConnect;
     var l = shapes.length;
     for (var i = l-1; i >= 0; i--) {
       if (shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
+        if(wireModeToggle == 1) {
+          shapesToConnect.push(mySel);
+        }
         // Keep track of where in the object we clicked
         // so we can move it smoothly (see mousemove)
         myState.dragoffx = mx - mySel.x;
@@ -287,6 +361,7 @@ CanvasState.prototype.draw = function() {
   if (!this.valid) {
     var ctx = this.ctx;
     var shapes = this.shapes;
+    var shapesToConnect = this.shapesToConnect;
     this.clear();
     
     // ** Add stuff you want drawn in the background all the time here **
@@ -318,8 +393,22 @@ CanvasState.prototype.draw = function() {
     }
     
     // ** Add stuff you want drawn on top all the time here **
-    
+
     this.valid = true;
+
+    s.ctx.strokeStyle = "#00FF00";
+    s.ctx.lineWidth = 4;
+    for(var t = 0; t < shapesToConnect.length;) {
+      if(t + 1 != null) {
+        s.ctx.beginPath();
+        s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 30, shapesToConnect[t].y + (shapesToConnect[t].h/2));
+        s.ctx.lineTo(shapesToConnect[t + 1].x - 30, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
+        s.ctx.stroke();
+      }
+      if(t + 2 != null) {
+        t += 2;
+      }
+    }
   }
 }
 
