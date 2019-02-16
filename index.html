@@ -6,6 +6,7 @@
             html, body {
                 background-color: #272a39;
                 color: white;
+                font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 font-size: 30px;
                 overflow: hidden;
             }
@@ -13,6 +14,10 @@
                 font-size: 50px;
                 color: white;
                 margin-right: 20px;
+            }
+            #version {
+                font-size: 30px;
+                color: rgb(122, 122, 122);
             }
             #credits {
                 font-size: 20px;
@@ -36,10 +41,9 @@
             #codeDisplay {
                 display: none;
             }
-            #gridmaker {
+            #infoBox {
                 display: none;
                 position: relative;
-                align-items: center;
                 background-color:#0277d6;
                 border: 1px solid white;
                 padding: 10px;
@@ -47,6 +51,14 @@
             #download {
                 display: none;
                 position: relative;
+                background-color:#0277d6;
+                border: 1px solid white;
+                padding: 10px;
+            }
+            #gridmaker {
+                display: none;
+                position: relative;
+                align-items: center;
                 background-color:#0277d6;
                 border: 1px solid white;
                 padding: 10px;
@@ -116,7 +128,13 @@
                 }
             };
             function button_info() {
-                // TODO
+                var ib = document.getElementById("infoBox");
+                if (ib.style.display == 'block') {
+                    ib.style.display = 'none';
+                }
+                else {
+                    ib.style.display = 'block';
+                }
             }
             function button_download() {
                 var dl = document.getElementById("download");
@@ -155,14 +173,21 @@
                     <input id="filename" type="text" id="gridHeight" size="25" value="example_name.slj" style="font-size: 30px;">
                     <button type="button" onclick="download()" style="font-size:40px">Download</button>
                 </div>
+                <div id="infoBox">
+                    <div>Programmed by 🦖Corbin Trexler</div>
+                    <br />
+                    <div>Any color schemes and component designs deriving from the Android application Smart Logic Simulator are copyright Tomasz Czart</div>
+                    <div><a href="https://play.google.com/store/apps/details?id=com.tomaszczart.smartlogicsimulator">Download Smart Logic Simulator</a></div>
+                </div>
                 <div class="btn-group">
-                    <button style="font-size: 50px; padding: 0px 18px 8px 18px" onclick="button_infod()">🛈</button>
+                    <button style="font-size: 50px; padding: 0px 18px 8px 18px" onclick="button_info()">🛈</button>
                     <button onclick="button_download()">💾</button>
                     <button style="font-size: 55px; padding: 3px 18px 4px 18px" onclick="button_grid()">▦</button>
                     <button onclick="clearCanvas()">❌</button>
                     <button id="wireMode" onclick="wireMode(this)" style="background:#0277d6">⛓</button>
                 </div>
-                <span id="title">SLS Companion App</span><br /><span id="credits">by 🦖Corbin Trexler</span>
+                <span id="title">SLS Companion App</span>
+                <span id="version">v0.5.1</span>
             </div>
             <div id="code">
                 <textarea id="codeDisplay" rows="25" cols="50">Choose a component and grid size and PATTERNIZE!</textarea>

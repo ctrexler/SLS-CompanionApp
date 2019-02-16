@@ -42,13 +42,13 @@ function Pins(ctx,thisShape) {
   var spacingN = thisShape.w/(parseInt(thisShape.pinsN) + 1);
   var spaceCount = spacingN;
   for(var pN = 0; pN < thisShape.pinsN; pN++) {
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(thisShape.x + spaceCount, thisShape.y - 22, 7, 0, 2 * Math.PI);
+    ctx.stroke();
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(thisShape.x + spaceCount, thisShape.y - 30, 10, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(thisShape.x + spaceCount, thisShape.y - 20);
+    ctx.moveTo(thisShape.x + spaceCount, thisShape.y - 15);
     ctx.lineTo(thisShape.x + spaceCount, thisShape.y - 2);
     ctx.stroke();
     spaceCount += spacingN;
@@ -58,13 +58,13 @@ function Pins(ctx,thisShape) {
   var spacingE = thisShape.h/(parseInt(thisShape.pinsE) + 1);
   spaceCount = spacingE;
   for(var pE = 0; pE < thisShape.pinsE; pE++) {
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(thisShape.x + thisShape.w + 22, thisShape.y + spaceCount, 7, 0, 2 * Math.PI);
+    ctx.stroke();
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(thisShape.x + thisShape.w + 30, thisShape.y + spaceCount, 10, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(thisShape.x + thisShape.w + 20, thisShape.y + spaceCount);
+    ctx.moveTo(thisShape.x + thisShape.w + 15, thisShape.y + spaceCount);
     ctx.lineTo(thisShape.x + thisShape.w + 2, thisShape.y + spaceCount);
     ctx.stroke();
     spaceCount += spacingE;
@@ -74,13 +74,13 @@ function Pins(ctx,thisShape) {
   var spacingS = thisShape.w/(parseInt(thisShape.pinsS) + 1);
   spaceCount = spacingS;
   for(var pS = 0; pS < thisShape.pinsS; pS++) {
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(thisShape.x + spaceCount, thisShape.y + thisShape.h + 22, 7, 0, 2 * Math.PI);
+    ctx.stroke();
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(thisShape.x + spaceCount, thisShape.y + thisShape.h + 30, 10, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(thisShape.x + spaceCount, thisShape.y + thisShape.h + 20);
+    ctx.moveTo(thisShape.x + spaceCount, thisShape.y + thisShape.h + 15);
     ctx.lineTo(thisShape.x + spaceCount, thisShape.y + thisShape.h + 2);
     ctx.stroke();
     spaceCount += spacingS;
@@ -90,13 +90,13 @@ function Pins(ctx,thisShape) {
   var spacingW = thisShape.h/(parseInt(thisShape.pinsW) + 1);
   spaceCount = spacingW;
   for(var pW = 0; pW < thisShape.pinsW; pW++) {
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(thisShape.x - 22, thisShape.y + spaceCount, 7, 0, 2 * Math.PI);
+    ctx.stroke();
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(thisShape.x - 30, thisShape.y + spaceCount, 10, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(thisShape.x - 20, thisShape.y + spaceCount);
+    ctx.moveTo(thisShape.x - 15, thisShape.y + spaceCount);
     ctx.lineTo(thisShape.x - 2, thisShape.y + spaceCount);
     ctx.stroke();
     spaceCount += spacingW;
@@ -127,7 +127,7 @@ Shape.prototype.draw = function(ctx) {
     for(var o = 0; o < 5; o++) {
       for(var p = 0; p < 7; p++) {
         ctx.beginPath();
-        ctx.arc(this.x + ((this.w/5) * (o + 1)) - this.w/10, this.y + ((this.h/7) * (p + 1)) - this.h/14, (this.w/7)/2, 0, 2 * Math.PI);
+        ctx.arc(this.x + ((this.w/5) * (o + 1)) - this.w/10, this.y + ((this.h/7) * (p + 1)) - this.h/14, (this.w/7)/1.8, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fillStyle = "rgba(44, 44, 44, 1)";
         ctx.fill();
@@ -395,20 +395,7 @@ CanvasState.prototype.draw = function() {
     // ** Add stuff you want drawn on top all the time here **
 
     this.valid = true;
-
-    s.ctx.strokeStyle = "#00FF00";
-    s.ctx.lineWidth = 4;
-    for(var t = 0; t < shapesToConnect.length;) {
-      if(t + 1 != null) {
-        s.ctx.beginPath();
-        s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 30, shapesToConnect[t].y + (shapesToConnect[t].h/2));
-        s.ctx.lineTo(shapesToConnect[t + 1].x - 30, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
-        s.ctx.stroke();
-      }
-      if(t + 2 != null) {
-        t += 2;
-      }
-    }
+    connectShapes();
   }
 }
 
@@ -452,3 +439,20 @@ CanvasState.prototype.getMouse = function(e) {
 //}
 
 // Now go make something amazing!
+
+function connectShapes() {
+  shapesToConnect = s.shapesToConnect;
+  s.ctx.strokeStyle = "#00FF00";
+    s.ctx.lineWidth = 4;
+    for(var t = 0; t < shapesToConnect.length;) {
+      if(t + 1 != null) {
+        s.ctx.beginPath();
+        s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 22, shapesToConnect[t].y + (shapesToConnect[t].h/2));
+        s.ctx.lineTo(shapesToConnect[t + 1].x - 22, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
+        s.ctx.stroke();
+      }
+      if(t + 2 != null) {
+        t += 2;
+      }
+    }
+}
