@@ -26,7 +26,7 @@ function Shape(comp) {
   this.h = comp.TRAITS.SIZE.H || 1;
   this.fill = comp.TRAITS.FILL || "#FFFFFF";
   this.stroke = comp.TRAITS.STROKE || "#000000"
-  this.id = comp.TRAITS.ID || "id";
+  this.id = comp.ID || "id";
   this.name = comp.TRAITS.NAME || "";
   this.shapeType = comp.TRAITS.SHAPETYPE || "shapeType";
   this.pinsN = comp.TRAITS.PINS.N || 0;
@@ -230,7 +230,11 @@ function CanvasState(canvas) {
         myState.valid = false;
         return;
       }
+      else if(checkPinRange(shapes[i], mx, my)) {
+        //document.getElementById("codeDisplay").innerHTML = "YES!";
+      }
     }
+
     // havent returned means we have failed to select anything.
     // If there was an object selected, we deselect it
     if (myState.selection) {
@@ -261,8 +265,8 @@ function CanvasState(canvas) {
       var mouse = myState.getMouse(e);
       // We don't want to drag the object by its top-left corner, we want to drag it
       // from where we clicked. Thats why we saved the offset and use it here
-      myState.selection.x = mouse.x - myState.dragoffx;
-      myState.selection.y = mouse.y - myState.dragoffy;
+      myState.selection.x = mx - myState.dragoffx;
+      myState.selection.y = my - myState.dragoffy;
       for (var j = 0; j < slsCode.COMPONENTS.length; j++) {
         if(slsCode.COMPONENTS[j].ID == myState.selection.id) {
             slsCode.COMPONENTS[j].X = myState.selection.x;
@@ -440,19 +444,54 @@ CanvasState.prototype.getMouse = function(e) {
 
 // Now go make something amazing!
 
-function connectShapes() {
-  shapesToConnect = s.shapesToConnect;
-  s.ctx.strokeStyle = "#00FF00";
-    s.ctx.lineWidth = 4;
-    for(var t = 0; t < shapesToConnect.length;) {
-      if(t + 1 != null) {
-        s.ctx.beginPath();
-        s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 22, shapesToConnect[t].y + (shapesToConnect[t].h/2));
-        s.ctx.lineTo(shapesToConnect[t + 1].x - 22, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
-        s.ctx.stroke();
-      }
-      if(t + 2 != null) {
-        t += 2;
-      }
+function checkPinRange(shape, mx, my) {
+  if(shape.pinsN > 0) {
+    if(my > (shape.y - 30) && my < shape.y && mx > shape.x && mx < (shape.x + shape.w)) {
+      document.getElementById("codeDisplay").innerHTML += shape.name + " NORTH!";
+    //   if(s.shapesToConnect[1].id == shape.id) {
+    //     s.ctx.beginPath();
+    //     s.ctx.moveTo(shapesToConnect[0].x + shapesToConnect[0].w + 22, shapesToConnect[0].y + (shapesToConnect[0].h/2));
+    //     s.ctx.lineTo(shapesToConnect[1].y - 22, shapesToConnect[1].x + (shapesToConnect[1].w/2));
+    //     s.ctx.stroke();
+    //   }
+      // return true;
     }
+  }
+  if(shape.pinsE > 0) {
+    if(mx < (shape.x + shape.w + 30) && mx > (shape.x + shape.w) && my > shape.y && my < (shape.y + shape.h)) {
+      document.getElementById("codeDisplay").innerHTML += shape.name + " EAST!";
+      // return true;
+    }
+  }
+  if(shape.pinsS > 0) {
+    if(my < (shape.y + shape.h + 30) && my > (shape.y + shape.h) && mx > shape.x && mx < (shape.x + shape.w)) {
+      document.getElementById("codeDisplay").innerHTML += shape.name + " SOUTH!";
+      // return true;
+    }
+  }
+  if(shape.pinsW > 0) {
+    if(mx > (shape.x - 30) && mx < shape.x && my > shape.y && my < (shape.y + shape.h)) {
+      document.getElementById("codeDisplay").innerHTML += shape.name + " WEST!";
+      // return true;
+    }
+  return true;
+  }
+  document.getElementById("codeDisplay").innerHTML += "\n";
 }
+
+// function connectShapes() {
+//   shapesToConnect = s.shapesToConnect;
+//   s.ctx.strokeStyle = "#00FF00";
+//   s.ctx.lineWidth = 4;
+//   for(var t = 0; t < shapesToConnect.length;) {
+//     if(t + 1 != null) {
+//       s.ctx.beginPath();
+//       s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 22, shapesToConnect[t].y + (shapesToConnect[t].h/2));
+//       s.ctx.lineTo(shapesToConnect[t + 1].x - 22, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
+//       s.ctx.stroke();
+//     }
+//     if(t + 2 != null) {
+//       t += 2;
+//     }
+//   }
+// }
