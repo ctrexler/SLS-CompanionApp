@@ -265,8 +265,8 @@ function CanvasState(canvas) {
       var mouse = myState.getMouse(e);
       // We don't want to drag the object by its top-left corner, we want to drag it
       // from where we clicked. Thats why we saved the offset and use it here
-      myState.selection.x = mx - myState.dragoffx;
-      myState.selection.y = my - myState.dragoffy;
+      myState.selection.x = mouse.x - myState.dragoffx;
+      myState.selection.y = mouse.y - myState.dragoffy;
       for (var j = 0; j < slsCode.COMPONENTS.length; j++) {
         if(slsCode.COMPONENTS[j].ID == myState.selection.id) {
             slsCode.COMPONENTS[j].X = myState.selection.x;
@@ -445,33 +445,56 @@ CanvasState.prototype.getMouse = function(e) {
 // Now go make something amazing!
 
 function checkPinRange(shape, mx, my) {
+  var spaceCount = 0;
   if(shape.pinsN > 0) {
     if(my > (shape.y - 30) && my < shape.y && mx > shape.x && mx < (shape.x + shape.w)) {
-      document.getElementById("codeDisplay").innerHTML += shape.name + " NORTH!";
-    //   if(s.shapesToConnect[1].id == shape.id) {
-    //     s.ctx.beginPath();
-    //     s.ctx.moveTo(shapesToConnect[0].x + shapesToConnect[0].w + 22, shapesToConnect[0].y + (shapesToConnect[0].h/2));
-    //     s.ctx.lineTo(shapesToConnect[1].y - 22, shapesToConnect[1].x + (shapesToConnect[1].w/2));
-    //     s.ctx.stroke();
-    //   }
-      // return true;
+      var spacingN = shape.w/(parseInt(shape.pinsN) + 1);
+      spaceCount = spacingN;
+      for(var sN = 0; sN < shape.pinsN; sN++) {
+        if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
+          document.getElementById("codeDisplay").innerHTML += shape.name + " N-Pin: " + sN + "\n";
+        }
+        spaceCount += spacingN;
+      }
+      //return true;
     }
   }
   if(shape.pinsE > 0) {
     if(mx < (shape.x + shape.w + 30) && mx > (shape.x + shape.w) && my > shape.y && my < (shape.y + shape.h)) {
-      document.getElementById("codeDisplay").innerHTML += shape.name + " EAST!";
+      var spacingE = shape.h/(parseInt(shape.pinsE) + 1);
+      spaceCount = spacingE;
+      for(var sE = 0; sE < shape.pinsE; sE++) {
+        if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
+          document.getElementById("codeDisplay").innerHTML += shape.name + " E-Pin: " + sE + "\n";
+        }
+        spaceCount += spacingE;
+      }
       // return true;
     }
   }
   if(shape.pinsS > 0) {
     if(my < (shape.y + shape.h + 30) && my > (shape.y + shape.h) && mx > shape.x && mx < (shape.x + shape.w)) {
-      document.getElementById("codeDisplay").innerHTML += shape.name + " SOUTH!";
+      var spacingS = shape.w/(parseInt(shape.pinsS) + 1);
+      spaceCount = spacingS;
+      for(var sS = 0; sS < shape.pinsS; sS++) {
+        if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
+          document.getElementById("codeDisplay").innerHTML += shape.name + " S-Pin: " + sS + "\n";
+        }
+        spaceCount += spacingS;
+      }
       // return true;
     }
   }
   if(shape.pinsW > 0) {
     if(mx > (shape.x - 30) && mx < shape.x && my > shape.y && my < (shape.y + shape.h)) {
-      document.getElementById("codeDisplay").innerHTML += shape.name + " WEST!";
+      var spacingW = shape.h/(parseInt(shape.pinsW) + 1);
+      spaceCount = spacingW;
+      for(var sW = 0; sW < shape.pinsW; sW++) {
+        if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
+          document.getElementById("codeDisplay").innerHTML += shape.name + " W-Pin: " + sW + "\n";
+        }
+        spaceCount += spacingW;
+      }
       // return true;
     }
   return true;
