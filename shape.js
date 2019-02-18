@@ -189,7 +189,7 @@ function CanvasState(canvas) {
   
   this.valid = false; // when set to false, the canvas will redraw everything
   this.shapes = [];  // the collection of things to be drawn
-  this.shapesToConnect = [];
+  this.pinsToConnect = [];
   this.dragging = false; // Keep track of when we are dragging
   // the current selected object. In the future we could turn this into an array for multiple selection
   this.selection = null;
@@ -213,14 +213,11 @@ function CanvasState(canvas) {
     var mx = mouse.x;
     var my = mouse.y;
     var shapes = myState.shapes;
-    var shapesToConnect = myState.shapesToConnect;
+    var pinsToConnect = myState.pinsToConnect;
     var l = shapes.length;
     for (var i = l-1; i >= 0; i--) {
       if (shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
-        if(wireModeToggle == 1) {
-          shapesToConnect.push(mySel);
-        }
         // Keep track of where in the object we clicked
         // so we can move it smoothly (see mousemove)
         myState.dragoffx = mx - mySel.x;
@@ -230,8 +227,20 @@ function CanvasState(canvas) {
         myState.valid = false;
         return;
       }
-      else if(checkPinRange(shapes[i], mx, my)) {
-        //document.getElementById("codeDisplay").innerHTML = "YES!";
+      if(wireModeToggle == 1) {
+        var selectedPin = checkPinSelection(shapes[i], mx, my);
+        if(selectedPin != null) {
+          if(pinsToConnect.length == 0 || pinsToConnect.length % 2 == 0) {
+            pinsToConnect.push({SHAPE: shapes[i], PIN: selectedPin.PIN, TYPE: selectedPin.TYPE, DIRECTION: selectedPin.DIRECTION, SPACING: selectedPin.SPACING});
+            document.getElementById("codeDisplay").innerHTML += "\n" + pinsToConnect[pinsToConnect.length-1].SHAPE.id + " : " + pinsToConnect[pinsToConnect.length-1].PIN + " : " + pinsToConnect[pinsToConnect.length-1].TYPE;
+            return;
+          }
+          else if(pinsToConnect[pinsToConnect.length - 1].TYPE != selectedPin.TYPE) {
+            pinsToConnect.push({SHAPE: shapes[i], PIN: selectedPin.PIN, TYPE: selectedPin.TYPE, DIRECTION: selectedPin.DIRECTION, SPACING: selectedPin.SPACING});
+            document.getElementById("codeDisplay").innerHTML += "\n" + pinsToConnect[pinsToConnect.length-1].SHAPE.id + " : " + pinsToConnect[pinsToConnect.length-1].PIN + " : " + pinsToConnect[pinsToConnect.length-1].TYPE;
+            return;
+          }
+        }
       }
     }
 
@@ -240,6 +249,7 @@ function CanvasState(canvas) {
     if (myState.selection) {
       myState.selection = null;
       myState.valid = false; // Need to clear the old selection border
+      array.splice(pinsToConnect.length - 1, 1);
     }
   }, true);
 
@@ -365,7 +375,6 @@ CanvasState.prototype.draw = function() {
   if (!this.valid) {
     var ctx = this.ctx;
     var shapes = this.shapes;
-    var shapesToConnect = this.shapesToConnect;
     this.clear();
     
     // ** Add stuff you want drawn in the background all the time here **
@@ -398,8 +407,8 @@ CanvasState.prototype.draw = function() {
     
     // ** Add stuff you want drawn on top all the time here **
 
+    connectPins();
     this.valid = true;
-    connectShapes();
   }
 }
 
@@ -444,7 +453,7 @@ CanvasState.prototype.getMouse = function(e) {
 
 // Now go make something amazing!
 
-function checkPinRange(shape, mx, my) {
+function checkPinSelection(shape, mx, my) {
   var spaceCount = 0;
   if(shape.pinsN[0] > 0) {
     if(my > (shape.y - 30) && my < shape.y && mx > shape.x && mx < (shape.x + shape.w)) {
@@ -452,11 +461,10 @@ function checkPinRange(shape, mx, my) {
       spaceCount = spacingN;
       for(var sN = 0; sN < shape.pinsN[0]; sN++) {
         if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " N-Pin: " + sN + ", ID: " + shape.pinsN[sN + 1] + "\n";
+          return {PIN: shape.pinsN[sN + 1], TYPE: "input", DIRECTION: "N", SPACING: spaceCount};
         }
         spaceCount += spacingN;
       }
-      //return true;
     }
   }
   if(shape.pinsE[0] > 0) {
@@ -465,11 +473,10 @@ function checkPinRange(shape, mx, my) {
       spaceCount = spacingE;
       for(var sE = 0; sE < shape.pinsE[0]; sE++) {
         if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " E-Pin: " + sE + ", ID: " + shape.pinsE[sE + 1] + "\n";
+          return {PIN: shape.pinsE[sE + 1], TYPE: "output", DIRECTION: "E", SPACING: spaceCount};
         }
         spaceCount += spacingE;
       }
-      // return true;
     }
   }
   if(shape.pinsS[0] > 0) {
@@ -478,11 +485,10 @@ function checkPinRange(shape, mx, my) {
       spaceCount = spacingS;
       for(var sS = 0; sS < shape.pinsS[0]; sS++) {
         if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " S-Pin: " + sS + ", ID: " + shape.pinsS[sS + 1] + "\n";
+          return {PIN: shape.pinsS[sS + 1], TYPE: "input", DIRECTION: "S", SPACING: spaceCount};
         }
         spaceCount += spacingS;
       }
-      // return true;
     }
   }
   if(shape.pinsW[0] > 0) {
@@ -491,30 +497,53 @@ function checkPinRange(shape, mx, my) {
       spaceCount = spacingW;
       for(var sW = 0; sW < shape.pinsW[0]; sW++) {
         if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " W-Pin: " + sW + ", ID: " + shape.pinsW[sW + 1] + "\n";
+          return {PIN: shape.pinsW[sW + 1], TYPE: "input", DIRECTION: "W", SPACING: spaceCount};
         }
         spaceCount += spacingW;
       }
-      // return true;
     }
-  return true;
   }
-  document.getElementById("codeDisplay").innerHTML += "\n";
+  return null;
 }
 
-// function connectShapes() {
-//   shapesToConnect = s.shapesToConnect;
-//   s.ctx.strokeStyle = "#00FF00";
-//   s.ctx.lineWidth = 4;
-//   for(var t = 0; t < shapesToConnect.length;) {
-//     if(t + 1 != null) {
-//       s.ctx.beginPath();
-//       s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 22, shapesToConnect[t].y + (shapesToConnect[t].h/2));
-//       s.ctx.lineTo(shapesToConnect[t + 1].x - 22, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
-//       s.ctx.stroke();
-//     }
-//     if(t + 2 != null) {
-//       t += 2;
-//     }
-//   }
-// }
+function connectPins() {
+  pinsToConnect = s.pinsToConnect;
+  s.ctx.strokeStyle = "#00FF00";
+  s.ctx.lineWidth = 4;
+  s.ctx.beginPath();
+  for(var t = 0; t < pinsToConnect.length;) {
+    if(t + 1 != null) {
+      s.ctx.beginPath();
+      if(pinsToConnect[t].DIRECTION == "N") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x + pinsToConnect[t].SPACING, pinsToConnect[t].SHAPE.y - 22);
+      }
+      else if(pinsToConnect[t].DIRECTION == "E") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x + pinsToConnect[t].SHAPE.w + 22, pinsToConnect[t].SHAPE.y + pinsToConnect[t].SPACING);
+      }
+      else if(pinsToConnect[t].DIRECTION == "S") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x + pinsToConnect[t].SPACING, pinsToConnect[t].SHAPE.y + pinsToConnect[t].SHAPE.h + 22);
+      }
+      else if(pinsToConnect[t].DIRECTION == "W") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x - 22, pinsToConnect[t].SHAPE.y + pinsToConnect[t].SPACING);
+      }
+
+      if(pinsToConnect[t + 1].DIRECTION == "N") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x + pinsToConnect[t + 1].SPACING, pinsToConnect[t + 1].SHAPE.y - 22);
+      }
+      else if(pinsToConnect[t + 1].DIRECTION == "E") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x + pinsToConnect[t + 1].SHAPE.w + 22, pinsToConnect[t + 1].SHAPE.y + pinsToConnect[t + 1].SPACING);
+      }
+      else if(pinsToConnect[t + 1].DIRECTION == "S") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x + pinsToConnect[t + 1].SPACING, pinsToConnect[t + 1].SHAPE.y + pinsToConnect[t + 1].SHAPE.h + 22);
+      }
+      else if(pinsToConnect[t + 1].DIRECTION == "W") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x - 22, pinsToConnect[t + 1].SHAPE.y + pinsToConnect[t + 1].SPACING);
+      }
+      s.ctx.stroke();
+    }
+    if(t + 2 != null) {
+      t += 2;
+    }
+  }
+  s.valid = false;
+}
