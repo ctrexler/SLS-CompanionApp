@@ -39,9 +39,9 @@ function Pins(ctx,thisShape) {
   ctx.strokeStyle = "#AAAAAA";
 
   //N
-  var spacingN = thisShape.w/(parseInt(thisShape.pinsN) + 1);
+  var spacingN = thisShape.w/(parseInt(thisShape.pinsN[0]) + 1);
   var spaceCount = spacingN;
-  for(var pN = 0; pN < thisShape.pinsN; pN++) {
+  for(var pN = 0; pN < thisShape.pinsN[0]; pN++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x + spaceCount, thisShape.y - 22, 7, 0, 2 * Math.PI);
@@ -55,9 +55,9 @@ function Pins(ctx,thisShape) {
   }
 
   //E
-  var spacingE = thisShape.h/(parseInt(thisShape.pinsE) + 1);
+  var spacingE = thisShape.h/(parseInt(thisShape.pinsE[0]) + 1);
   spaceCount = spacingE;
-  for(var pE = 0; pE < thisShape.pinsE; pE++) {
+  for(var pE = 0; pE < thisShape.pinsE[0]; pE++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x + thisShape.w + 22, thisShape.y + spaceCount, 7, 0, 2 * Math.PI);
@@ -71,9 +71,9 @@ function Pins(ctx,thisShape) {
   }
 
   //S
-  var spacingS = thisShape.w/(parseInt(thisShape.pinsS) + 1);
+  var spacingS = thisShape.w/(parseInt(thisShape.pinsS[0]) + 1);
   spaceCount = spacingS;
-  for(var pS = 0; pS < thisShape.pinsS; pS++) {
+  for(var pS = 0; pS < thisShape.pinsS[0]; pS++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x + spaceCount, thisShape.y + thisShape.h + 22, 7, 0, 2 * Math.PI);
@@ -87,9 +87,9 @@ function Pins(ctx,thisShape) {
   }
 
   //W
-  var spacingW = thisShape.h/(parseInt(thisShape.pinsW) + 1);
+  var spacingW = thisShape.h/(parseInt(thisShape.pinsW[0]) + 1);
   spaceCount = spacingW;
-  for(var pW = 0; pW < thisShape.pinsW; pW++) {
+  for(var pW = 0; pW < thisShape.pinsW[0]; pW++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x - 22, thisShape.y + spaceCount, 7, 0, 2 * Math.PI);
@@ -446,52 +446,52 @@ CanvasState.prototype.getMouse = function(e) {
 
 function checkPinRange(shape, mx, my) {
   var spaceCount = 0;
-  if(shape.pinsN > 0) {
+  if(shape.pinsN[0] > 0) {
     if(my > (shape.y - 30) && my < shape.y && mx > shape.x && mx < (shape.x + shape.w)) {
-      var spacingN = shape.w/(parseInt(shape.pinsN) + 1);
+      var spacingN = shape.w/(parseInt(shape.pinsN[0]) + 1);
       spaceCount = spacingN;
-      for(var sN = 0; sN < shape.pinsN; sN++) {
+      for(var sN = 0; sN < shape.pinsN[0]; sN++) {
         if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " N-Pin: " + sN + "\n";
+          document.getElementById("codeDisplay").innerHTML += shape.name + " N-Pin: " + sN + ", ID: " + shape.pinsN[sN + 1] + "\n";
         }
         spaceCount += spacingN;
       }
       //return true;
     }
   }
-  if(shape.pinsE > 0) {
+  if(shape.pinsE[0] > 0) {
     if(mx < (shape.x + shape.w + 30) && mx > (shape.x + shape.w) && my > shape.y && my < (shape.y + shape.h)) {
-      var spacingE = shape.h/(parseInt(shape.pinsE) + 1);
+      var spacingE = shape.h/(parseInt(shape.pinsE[0]) + 1);
       spaceCount = spacingE;
-      for(var sE = 0; sE < shape.pinsE; sE++) {
+      for(var sE = 0; sE < shape.pinsE[0]; sE++) {
         if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " E-Pin: " + sE + "\n";
+          document.getElementById("codeDisplay").innerHTML += shape.name + " E-Pin: " + sE + ", ID: " + shape.pinsE[sE + 1] + "\n";
         }
         spaceCount += spacingE;
       }
       // return true;
     }
   }
-  if(shape.pinsS > 0) {
+  if(shape.pinsS[0] > 0) {
     if(my < (shape.y + shape.h + 30) && my > (shape.y + shape.h) && mx > shape.x && mx < (shape.x + shape.w)) {
-      var spacingS = shape.w/(parseInt(shape.pinsS) + 1);
+      var spacingS = shape.w/(parseInt(shape.pinsS[0]) + 1);
       spaceCount = spacingS;
-      for(var sS = 0; sS < shape.pinsS; sS++) {
+      for(var sS = 0; sS < shape.pinsS[0]; sS++) {
         if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " S-Pin: " + sS + "\n";
+          document.getElementById("codeDisplay").innerHTML += shape.name + " S-Pin: " + sS + ", ID: " + shape.pinsS[sS + 1] + "\n";
         }
         spaceCount += spacingS;
       }
       // return true;
     }
   }
-  if(shape.pinsW > 0) {
+  if(shape.pinsW[0] > 0) {
     if(mx > (shape.x - 30) && mx < shape.x && my > shape.y && my < (shape.y + shape.h)) {
-      var spacingW = shape.h/(parseInt(shape.pinsW) + 1);
+      var spacingW = shape.h/(parseInt(shape.pinsW[0]) + 1);
       spaceCount = spacingW;
-      for(var sW = 0; sW < shape.pinsW; sW++) {
+      for(var sW = 0; sW < shape.pinsW[0]; sW++) {
         if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
-          document.getElementById("codeDisplay").innerHTML += shape.name + " W-Pin: " + sW + "\n";
+          document.getElementById("codeDisplay").innerHTML += shape.name + " W-Pin: " + sW + ", ID: " + shape.pinsW[sW + 1] + "\n";
         }
         spaceCount += spacingW;
       }
