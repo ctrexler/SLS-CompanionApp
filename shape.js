@@ -26,7 +26,7 @@ function Shape(comp) {
   this.h = comp.TRAITS.SIZE.H || 1;
   this.fill = comp.TRAITS.FILL || "#FFFFFF";
   this.stroke = comp.TRAITS.STROKE || "#000000"
-  this.id = comp.TRAITS.ID || "id";
+  this.id = comp.ID || "id";
   this.name = comp.TRAITS.NAME || "";
   this.shapeType = comp.TRAITS.SHAPETYPE || "shapeType";
   this.pinsN = comp.TRAITS.PINS.N || 0;
@@ -39,9 +39,9 @@ function Pins(ctx,thisShape) {
   ctx.strokeStyle = "#AAAAAA";
 
   //N
-  var spacingN = thisShape.w/(parseInt(thisShape.pinsN) + 1);
+  var spacingN = thisShape.w/(parseInt(thisShape.pinsN[0]) + 1);
   var spaceCount = spacingN;
-  for(var pN = 0; pN < thisShape.pinsN; pN++) {
+  for(var pN = 0; pN < thisShape.pinsN[0]; pN++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x + spaceCount, thisShape.y - 22, 7, 0, 2 * Math.PI);
@@ -55,9 +55,9 @@ function Pins(ctx,thisShape) {
   }
 
   //E
-  var spacingE = thisShape.h/(parseInt(thisShape.pinsE) + 1);
+  var spacingE = thisShape.h/(parseInt(thisShape.pinsE[0]) + 1);
   spaceCount = spacingE;
-  for(var pE = 0; pE < thisShape.pinsE; pE++) {
+  for(var pE = 0; pE < thisShape.pinsE[0]; pE++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x + thisShape.w + 22, thisShape.y + spaceCount, 7, 0, 2 * Math.PI);
@@ -71,9 +71,9 @@ function Pins(ctx,thisShape) {
   }
 
   //S
-  var spacingS = thisShape.w/(parseInt(thisShape.pinsS) + 1);
+  var spacingS = thisShape.w/(parseInt(thisShape.pinsS[0]) + 1);
   spaceCount = spacingS;
-  for(var pS = 0; pS < thisShape.pinsS; pS++) {
+  for(var pS = 0; pS < thisShape.pinsS[0]; pS++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x + spaceCount, thisShape.y + thisShape.h + 22, 7, 0, 2 * Math.PI);
@@ -87,9 +87,9 @@ function Pins(ctx,thisShape) {
   }
 
   //W
-  var spacingW = thisShape.h/(parseInt(thisShape.pinsW) + 1);
+  var spacingW = thisShape.h/(parseInt(thisShape.pinsW[0]) + 1);
   spaceCount = spacingW;
-  for(var pW = 0; pW < thisShape.pinsW; pW++) {
+  for(var pW = 0; pW < thisShape.pinsW[0]; pW++) {
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(thisShape.x - 22, thisShape.y + spaceCount, 7, 0, 2 * Math.PI);
@@ -189,7 +189,7 @@ function CanvasState(canvas) {
   
   this.valid = false; // when set to false, the canvas will redraw everything
   this.shapes = [];  // the collection of things to be drawn
-  this.shapesToConnect = [];
+  this.pinsToConnect = [];
   this.dragging = false; // Keep track of when we are dragging
   // the current selected object. In the future we could turn this into an array for multiple selection
   this.selection = null;
@@ -213,14 +213,11 @@ function CanvasState(canvas) {
     var mx = mouse.x;
     var my = mouse.y;
     var shapes = myState.shapes;
-    var shapesToConnect = myState.shapesToConnect;
+    var pinsToConnect = myState.pinsToConnect;
     var l = shapes.length;
     for (var i = l-1; i >= 0; i--) {
       if (shapes[i].contains(mx, my)) {
         var mySel = shapes[i];
-        if(wireModeToggle == 1) {
-          shapesToConnect.push(mySel);
-        }
         // Keep track of where in the object we clicked
         // so we can move it smoothly (see mousemove)
         myState.dragoffx = mx - mySel.x;
@@ -230,12 +227,50 @@ function CanvasState(canvas) {
         myState.valid = false;
         return;
       }
+      if(wireModeToggle == 1) {
+        var selectedPin = checkPinSelection(shapes[i], mx, my);
+        if(selectedPin != null) {
+          if(pinsToConnect.length == 0 || pinsToConnect.length % 2 == 0) {
+            pinsToConnect.push({SHAPE: shapes[i], PIN: selectedPin.PIN, TYPE: selectedPin.TYPE, DIRECTION: selectedPin.DIRECTION, SPACING: selectedPin.SPACING});
+            return;
+          }
+          else if(pinsToConnect[pinsToConnect.length - 1].TYPE != selectedPin.TYPE) {
+            pinsToConnect.push({SHAPE: shapes[i], PIN: selectedPin.PIN, TYPE: selectedPin.TYPE, DIRECTION: selectedPin.DIRECTION, SPACING: selectedPin.SPACING});
+            var wireSchema = wire_schema;
+            if(pinsToConnect[pinsToConnect.length - 1].TYPE == "input") {
+              wireSchema.CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 1].PIN;
+              wireSchema.OTHER_COMPONENT = pinsToConnect[pinsToConnect.length - 2].SHAPE.id;
+              wireSchema.OTHER_CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 2].PIN;
+              for (var wirePushOne = 0; wirePushOne < slsCode.COMPONENTS.length; wirePushOne++) {
+                if(slsCode.COMPONENTS[wirePushOne].ID == pinsToConnect[pinsToConnect.length - 1].SHAPE.id) {
+                  slsCode.COMPONENTS[wirePushOne].INPUTS.push(JSON.parse(JSON.stringify(wireSchema)));
+                }
+              }
+            }
+            else if(pinsToConnect[pinsToConnect.length - 2].TYPE == "input") {
+              wireSchema.CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 2].PIN;
+              wireSchema.OTHER_COMPONENT = pinsToConnect[pinsToConnect.length - 1].SHAPE.id;
+              wireSchema.OTHER_CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 1].PIN;
+              for (var wirePushTwo = 0; wirePushTwo < slsCode.COMPONENTS.length; wirePushTwo++) {
+                if(slsCode.COMPONENTS[wirePushTwo].ID == pinsToConnect[pinsToConnect.length - 2].SHAPE.id) {
+                  slsCode.COMPONENTS[wirePushTwo].INPUTS.push(JSON.parse(JSON.stringify(wire_schema)));
+                }
+              }
+            }
+            document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+            myState.valid = false;
+            return;
+          }
+        }
+      }
     }
+
     // havent returned means we have failed to select anything.
     // If there was an object selected, we deselect it
     if (myState.selection) {
       myState.selection = null;
       myState.valid = false; // Need to clear the old selection border
+      array.splice(pinsToConnect.length - 1, 1);
     }
   }, true);
 
@@ -361,10 +396,11 @@ CanvasState.prototype.draw = function() {
   if (!this.valid) {
     var ctx = this.ctx;
     var shapes = this.shapes;
-    var shapesToConnect = this.shapesToConnect;
     this.clear();
     
     // ** Add stuff you want drawn in the background all the time here **
+    
+    connectPins();
     
     // draw all shapes
     var l = shapes.length;
@@ -395,7 +431,6 @@ CanvasState.prototype.draw = function() {
     // ** Add stuff you want drawn on top all the time here **
 
     this.valid = true;
-    connectShapes();
   }
 }
 
@@ -440,19 +475,96 @@ CanvasState.prototype.getMouse = function(e) {
 
 // Now go make something amazing!
 
-function connectShapes() {
-  shapesToConnect = s.shapesToConnect;
-  s.ctx.strokeStyle = "#00FF00";
-    s.ctx.lineWidth = 4;
-    for(var t = 0; t < shapesToConnect.length;) {
-      if(t + 1 != null) {
-        s.ctx.beginPath();
-        s.ctx.moveTo(shapesToConnect[t].x + shapesToConnect[t].w + 22, shapesToConnect[t].y + (shapesToConnect[t].h/2));
-        s.ctx.lineTo(shapesToConnect[t + 1].x - 22, shapesToConnect[t + 1].y + (shapesToConnect[t + 1].h/2));
-        s.ctx.stroke();
-      }
-      if(t + 2 != null) {
-        t += 2;
+function checkPinSelection(shape, mx, my) {
+  var spaceCount = 0;
+  if(shape.pinsN[0] > 0) {
+    if(my > (shape.y - 30) && my < shape.y && mx > shape.x && mx < (shape.x + shape.w)) {
+      var spacingN = shape.w/(parseInt(shape.pinsN[0]) + 1);
+      spaceCount = spacingN;
+      for(var sN = 0; sN < shape.pinsN[0]; sN++) {
+        if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
+          return {PIN: shape.pinsN[sN + 1], TYPE: "input", DIRECTION: "N", SPACING: spaceCount};
+        }
+        spaceCount += spacingN;
       }
     }
+  }
+  if(shape.pinsE[0] > 0) {
+    if(mx < (shape.x + shape.w + 30) && mx > (shape.x + shape.w) && my > shape.y && my < (shape.y + shape.h)) {
+      var spacingE = shape.h/(parseInt(shape.pinsE[0]) + 1);
+      spaceCount = spacingE;
+      for(var sE = 0; sE < shape.pinsE[0]; sE++) {
+        if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
+          return {PIN: shape.pinsE[sE + 1], TYPE: "output", DIRECTION: "E", SPACING: spaceCount};
+        }
+        spaceCount += spacingE;
+      }
+    }
+  }
+  if(shape.pinsS[0] > 0) {
+    if(my < (shape.y + shape.h + 30) && my > (shape.y + shape.h) && mx > shape.x && mx < (shape.x + shape.w)) {
+      var spacingS = shape.w/(parseInt(shape.pinsS[0]) + 1);
+      spaceCount = spacingS;
+      for(var sS = 0; sS < shape.pinsS[0]; sS++) {
+        if(mx > (shape.x + spaceCount - 10) && mx < (shape.x + spaceCount + 10)) {
+          return {PIN: shape.pinsS[sS + 1], TYPE: "input", DIRECTION: "S", SPACING: spaceCount};
+        }
+        spaceCount += spacingS;
+      }
+    }
+  }
+  if(shape.pinsW[0] > 0) {
+    if(mx > (shape.x - 30) && mx < shape.x && my > shape.y && my < (shape.y + shape.h)) {
+      var spacingW = shape.h/(parseInt(shape.pinsW[0]) + 1);
+      spaceCount = spacingW;
+      for(var sW = 0; sW < shape.pinsW[0]; sW++) {
+        if(my > (shape.y + spaceCount - 10) && my < (shape.y + spaceCount + 10)) {
+          return {PIN: shape.pinsW[sW + 1], TYPE: "input", DIRECTION: "W", SPACING: spaceCount};
+        }
+        spaceCount += spacingW;
+      }
+    }
+  }
+  return null;
+}
+
+function connectPins() {
+  pinsToConnect = s.pinsToConnect;
+  s.ctx.strokeStyle = "#00FF00";
+  s.ctx.lineWidth = 4;
+  s.ctx.beginPath();
+  for(var t = 0; t < pinsToConnect.length;) {
+    if(t + 1 != null) {
+      s.ctx.beginPath();
+      if(pinsToConnect[t].DIRECTION == "N") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x + pinsToConnect[t].SPACING, pinsToConnect[t].SHAPE.y - 22);
+      }
+      else if(pinsToConnect[t].DIRECTION == "E") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x + pinsToConnect[t].SHAPE.w + 22, pinsToConnect[t].SHAPE.y + pinsToConnect[t].SPACING);
+      }
+      else if(pinsToConnect[t].DIRECTION == "S") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x + pinsToConnect[t].SPACING, pinsToConnect[t].SHAPE.y + pinsToConnect[t].SHAPE.h + 22);
+      }
+      else if(pinsToConnect[t].DIRECTION == "W") {
+        s.ctx.moveTo(pinsToConnect[t].SHAPE.x - 22, pinsToConnect[t].SHAPE.y + pinsToConnect[t].SPACING);
+      }
+
+      if(pinsToConnect[t + 1].DIRECTION == "N") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x + pinsToConnect[t + 1].SPACING, pinsToConnect[t + 1].SHAPE.y - 22);
+      }
+      else if(pinsToConnect[t + 1].DIRECTION == "E") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x + pinsToConnect[t + 1].SHAPE.w + 22, pinsToConnect[t + 1].SHAPE.y + pinsToConnect[t + 1].SPACING);
+      }
+      else if(pinsToConnect[t + 1].DIRECTION == "S") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x + pinsToConnect[t + 1].SPACING, pinsToConnect[t + 1].SHAPE.y + pinsToConnect[t + 1].SHAPE.h + 22);
+      }
+      else if(pinsToConnect[t + 1].DIRECTION == "W") {
+        s.ctx.lineTo(pinsToConnect[t + 1].SHAPE.x - 22, pinsToConnect[t + 1].SHAPE.y + pinsToConnect[t + 1].SPACING);
+      }
+      s.ctx.stroke();
+    }
+    if(t + 2 != null) {
+      t += 2;
+    }
+  }
 }
