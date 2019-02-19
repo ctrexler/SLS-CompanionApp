@@ -47,7 +47,9 @@ var proximity_sensor = {"TRAITS":{"NAME":"Proximity Sensor","SIZE":{"W":80,"H":7
 var notification_led = {"TRAITS":{"NAME":"Notification","SIZE":{"W":80,"H":80},"FILL":"rgba(117, 117, 117, 1)","STROKE":"rgba(66, 66, 66, 1)","SHAPETYPE":"rectangle","PINS":{"N":[1,0],"E":[0],"S":[0],"W":[3,0,1,2]}},"ID":0,"TAG":"NOTIFICATION_LED","X":0,"Y":0,"INPUTS":[]};
 var rgb_light = {"TRAITS":{"NAME":"RGB Light","SIZE":{"W":90,"H":90},"FILL":"rgba(0, 0, 0, 1)","STROKE":"rgba(60, 60, 60, 1)","SHAPETYPE":"rectangle","PINS":{"N":[0],"E":[0],"S":[0],"W":[3,0,1,2]}},"ID":0,"TAG":"RGB_LIGHT","X":0,"Y":0,"INPUTS":[]};
 // PIN SPACING
-var pin_size = 15;
+var pin_size = 30;
+// WIRING SCHEMA
+var wire_schema = {"CONNECTOR_ID": 0, "OTHER_COMPONENT": 0, "OTHER_CONNECTOR_ID": 0};
 
 var compArray = [pulse_button,toggle_button,light_bulb,d_flipflop,sr_flipflop,jk_flipflop,t_flipflop,sr_latch,and_gate,buffer_gate,nand_gate,nor_gate,not_gate,or_gate,xor_gate,xnor_gate,ten_clock,five_clock,two_clock,one_clock,half_clock,fifth_clock,high_constant,low_constant,ss_display,dm_display,ss_decoder,flashlight,speaker,vibration,charge_sensor,light_sensor,magnetic_sensor,proximity_sensor,notification_led,rgb_light];
 var sel = document.getElementById("dropDown");
@@ -93,6 +95,7 @@ function addComp(x, y) {
     comp.X = this.x;
     comp.Y = this.y;
     comp.ID = randomID();
+    //comp.INPUTS.push(JSON.parse(JSON.stringify(wire_schema)));
     //s.addShape(new Shape(comp.X,comp.Y,comp.TRAITS.SIZE.W/1.1,comp.TRAITS.SIZE.H/1.1, comp.TRAITS.FILL, comp.TRAITS.STROKE, comp.ID, comp.TRAITS.NAME, comp.TRAITS.SHAPETYPE));
     s.addShape(new Shape(comp));
     delete comp.TRAITS;

@@ -232,12 +232,33 @@ function CanvasState(canvas) {
         if(selectedPin != null) {
           if(pinsToConnect.length == 0 || pinsToConnect.length % 2 == 0) {
             pinsToConnect.push({SHAPE: shapes[i], PIN: selectedPin.PIN, TYPE: selectedPin.TYPE, DIRECTION: selectedPin.DIRECTION, SPACING: selectedPin.SPACING});
-            document.getElementById("codeDisplay").innerHTML += "\n" + pinsToConnect[pinsToConnect.length-1].SHAPE.id + " : " + pinsToConnect[pinsToConnect.length-1].PIN + " : " + pinsToConnect[pinsToConnect.length-1].TYPE;
             return;
           }
           else if(pinsToConnect[pinsToConnect.length - 1].TYPE != selectedPin.TYPE) {
             pinsToConnect.push({SHAPE: shapes[i], PIN: selectedPin.PIN, TYPE: selectedPin.TYPE, DIRECTION: selectedPin.DIRECTION, SPACING: selectedPin.SPACING});
-            document.getElementById("codeDisplay").innerHTML += "\n" + pinsToConnect[pinsToConnect.length-1].SHAPE.id + " : " + pinsToConnect[pinsToConnect.length-1].PIN + " : " + pinsToConnect[pinsToConnect.length-1].TYPE;
+            var wireSchema = wire_schema;
+            if(pinsToConnect[pinsToConnect.length - 1].TYPE == "input") {
+              wireSchema.CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 1].PIN;
+              wireSchema.OTHER_COMPONENT = pinsToConnect[pinsToConnect.length - 2].SHAPE.id;
+              wireSchema.OTHER_CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 2].PIN;
+              for (var wirePushOne = 0; wirePushOne < slsCode.COMPONENTS.length; wirePushOne++) {
+                if(slsCode.COMPONENTS[wirePushOne].ID == pinsToConnect[pinsToConnect.length - 1].SHAPE.id) {
+                  slsCode.COMPONENTS[wirePushOne].INPUTS.push(JSON.parse(JSON.stringify(wireSchema)));
+                }
+              }
+            }
+            else if(pinsToConnect[pinsToConnect.length - 2].TYPE == "input") {
+              wireSchema.CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 2].PIN;
+              wireSchema.OTHER_COMPONENT = pinsToConnect[pinsToConnect.length - 1].SHAPE.id;
+              wireSchema.OTHER_CONNECTOR_ID = pinsToConnect[pinsToConnect.length - 1].PIN;
+              for (var wirePushTwo = 0; wirePushTwo < slsCode.COMPONENTS.length; wirePushTwo++) {
+                if(slsCode.COMPONENTS[wirePushTwo].ID == pinsToConnect[pinsToConnect.length - 2].SHAPE.id) {
+                  slsCode.COMPONENTS[wirePushTwo].INPUTS.push(JSON.parse(JSON.stringify(wire_schema)));
+                }
+              }
+            }
+            document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+            myState.valid = false;
             return;
           }
         }
@@ -379,6 +400,8 @@ CanvasState.prototype.draw = function() {
     
     // ** Add stuff you want drawn in the background all the time here **
     
+    connectPins();
+    
     // draw all shapes
     var l = shapes.length;
     for (var i = 0; i < l; i++) {
@@ -407,7 +430,6 @@ CanvasState.prototype.draw = function() {
     
     // ** Add stuff you want drawn on top all the time here **
 
-    connectPins();
     this.valid = true;
   }
 }
@@ -545,5 +567,4 @@ function connectPins() {
       t += 2;
     }
   }
-  s.valid = false;
 }
