@@ -1,6 +1,7 @@
 var slsdefault = {"HEADER":{"TAG":"PROJECT","APP_VERSION": 71},"COMPONENTS":[],"DEPENDENCIES":{}};
-var slsCode = JSON.parse(JSON.stringify(slsdefault))
-var s = new CanvasState(document.getElementById('canvas1'));
+var slsCode = JSON.parse(JSON.stringify(slsdefault));
+document.getElementById("codeDisplay").innerHTML = JSON.stringify(slsCode, null, 2);
+var s = new CanvasState(document.getElementById("canvas1"));
 var wireModeToggle = 0;
 globalCavasState(s);
 
@@ -134,6 +135,10 @@ function wireMode(btn) {
     if (wireModeToggle == 1) {
         wireModeToggle = 0;
         btn.style.background = "#0277d6";
+        drawPinSelection("overdraw");
+        if(pinsToConnect.length % 2 != 0) {
+            pinsToConnect.splice(pinsToConnect.length - 1, 1);
+        }
     } else {
         wireModeToggle = 1;
         btn.style.background = "#00AA00";

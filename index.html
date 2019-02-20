@@ -10,6 +10,9 @@
                 font-size: 30px;
                 overflow: hidden;
             }
+            body {
+                position:static;
+            }
             #title {
                 font-size: 50px;
                 color: white;
@@ -29,13 +32,12 @@
                 left: 20px;
                 z-index: 100;
             }
-            #code {
+            #toolbar {
+                display: flex;
                 position: absolute;
                 bottom: 0;
                 right: 0;
                 z-index: 100;
-            }
-            #toggleCode {
                 float: right;
             }
             #codeDisplay {
@@ -51,6 +53,7 @@
             #download {
                 display: none;
                 position: relative;
+                align-items: center;
                 background-color:#0277d6;
                 border: 1px solid white;
                 padding: 10px;
@@ -88,7 +91,11 @@
                 color: white; /* White text */
                 padding: 11px 15px; /* Some padding */
                 margin-right: 5px;
+                width: 100px;
                 cursor: pointer; /* Pointer/hand icon */
+                position: relative;
+                right: 0;
+                float: right;
             }
                 
             .styled-select select {
@@ -138,11 +145,11 @@
             }
             function button_download() {
                 var dl = document.getElementById("download");
-                if (dl.style.display == 'block') {
+                if (dl.style.display == 'flex') {
                     dl.style.display = 'none';
                 }
                 else {
-                    dl.style.display = 'block';
+                    dl.style.display = 'flex';
                 }
             }
             function button_grid() {
@@ -162,6 +169,10 @@
                 <select id="dropDown"></select>
             </div>
             <div id="d">
+                <span id="title">SLS Companion App</span>
+                <span id="version">v0.6.1</span>
+            </div>
+            <div id="toolbar">
                 <div id="gridmaker">
                     <span>
                         Grid Width: <input type="text" id="gridWidth" size="2" value="5" style="font-size: 30px; margin-right: 10px; margin-bottom: 10px"><br />
@@ -179,20 +190,21 @@
                     <div>Any color schemes and component designs deriving from the Android application Smart Logic Simulator are copyright Tomasz Czart</div>
                     <div><a href="https://play.google.com/store/apps/details?id=com.tomaszczart.smartlogicsimulator">Download Smart Logic Simulator</a></div>
                 </div>
+                <textarea id="codeDisplay" rows="25" cols="50"></textarea>
                 <div class="btn-group">
-                    <button style="font-size: 50px; padding: 0px 18px 8px 18px" onclick="button_info()">🛈</button>
-                    <button onclick="button_download()">💾</button>
-                    <button style="font-size: 55px; padding: 3px 18px 4px 18px" onclick="button_grid()">▦</button>
-                    <button onclick="clearCanvas()">❌</button>
                     <button id="wireMode" onclick="wireMode(this)" style="background:#0277d6">⛓</button>
+                    <br />
+                    <button style="font-size: 55px; padding: 3px 18px 4px 18px" onclick="button_grid()">▦</button>
+                    <br />
+                    <button onclick="button_download()">💾</button>
+                    <br />
+                    <button onclick="clearCanvas()">❌</button>
+                    <br />
+                    <button id="toggleCode" onclick="toggleCodeDisplay()" style="background:#0277d6">📃</button>
+                    <br />
+                    <button style="font-size: 50px; padding: 0px 18px 8px 18px" onclick="button_info()">ℹ</button>
                 </div>
-                <span id="title">SLS Companion App</span>
-                <span id="version">v0.6.0</span>
-            </div>
-            <div id="code">
-                <textarea id="codeDisplay" rows="25" cols="50">Choose a component and grid size and PATTERNIZE!</textarea>
                 <br />
-                <button type="button" id="toggleCode" onclick="toggleCodeDisplay()" style="font-size:30px">Hide/Show Code</button>
             </div>
         <script type="text/javascript" src="sls_components.js"></script>
     </body>
